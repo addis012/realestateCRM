@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/useAuth";
 import NotFound from "@/pages/not-found";
 import Landing from "@/pages/landing";
+import Login from "@/pages/login";
 import Dashboard from "@/pages/dashboard";
 import Leads from "@/pages/leads";
 import Properties from "@/pages/properties";
@@ -26,13 +27,16 @@ function Router() {
       <Route path="/sales" component={Dashboard} />
       <Route path="/superadmin" component={Dashboard} />
       
+      {/* Authentication */}
+      <Route path="/login" component={Login} />
+      <Route path="/landing" component={Landing} />
+      
       {/* Feature pages */}
       <Route path="/leads" component={Leads} />
       <Route path="/properties" component={Properties} />
       <Route path="/deals" component={Deals} />
       <Route path="/team" component={Team} />
       <Route path="/exchange-rates" component={ExchangeRates} />
-      <Route path="/landing" component={Landing} />
       <Route component={NotFound} />
     </Switch>
   );

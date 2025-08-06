@@ -10,7 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Building, Handshake, DollarSign, TrendingUp, ArrowUp } from "lucide-react";
 import SalesChart from "@/components/charts/sales-chart";
 import LeadSourceChart from "@/components/charts/lead-source-chart";
-import RoleSwitcher from "@/components/role-switcher";
+
 import { 
   SuperAdminDashboard, 
   AdminDashboard, 
@@ -23,19 +23,7 @@ export default function Dashboard() {
   const { user, isAuthenticated, isLoading } = useAuth();
   const [location] = useLocation();
 
-  // Detect role from URL and set it for demo
-  useEffect(() => {
-    const pathToRole: { [key: string]: string } = {
-      '/admin': 'admin',
-      '/supervisor': 'supervisor', 
-      '/sales': 'sales',
-      '/superadmin': 'superadmin'
-    };
-    
-    if (pathToRole[location]) {
-      localStorage.setItem('demo-role', pathToRole[location]);
-    }
-  }, [location]);
+
 
   // Redirect to home if not authenticated
   useEffect(() => {
@@ -72,10 +60,7 @@ export default function Dashboard() {
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header title="Dashboard" subtitle={`Welcome back, ${(user as any)?.firstName || 'User'}! Here's what's happening with your business today.`} />
         
-        {/* Role Switcher for Demo */}
-        <div className="mb-6">
-          <RoleSwitcher />
-        </div>
+
         
         <main className="flex-1 overflow-y-auto p-6 bg-gradient-to-br from-slate-50 to-slate-100/50">
           {/* Role-Based Dashboard Content */}

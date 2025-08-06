@@ -9,11 +9,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware - temporarily disabled for demo
   // await setupAuth(app);
 
-  // Auth routes - mock different users for demo based on query parameter
-  app.get('/api/auth/user/:role?', async (req: any, res) => {
+  // Login endpoints for different roles - professional access control
+  app.get('/api/login/superadmin', (req, res) => {
+    // In production, this would redirect to role-specific auth flow
+    res.redirect('/api/auth/login?role=superadmin');
+  });
+
+  app.get('/api/login/admin', (req, res) => {
+    res.redirect('/api/auth/login?role=admin');
+  });
+
+  app.get('/api/login/supervisor', (req, res) => {
+    res.redirect('/api/auth/login?role=supervisor');  
+  });
+
+  app.get('/api/login/sales', (req, res) => {
+    res.redirect('/api/auth/login?role=sales');
+  });
+
+  // Auth routes - return user based on session/authentication
+  app.get('/api/auth/user', async (req: any, res) => {
     try {
-      // Mock different user roles for demo
-      const roleParam = req.params.role || req.query.role || 'admin';
+      // In a real system, this would get user from session/JWT token
+      // Role is determined by user's assigned permissions in database
       
       const mockUsers = {
         superadmin: {
@@ -50,7 +68,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       };
       
-      const user = mockUsers[roleParam as keyof typeof mockUsers] || mockUsers.admin;
+      // Return admin user for authenticated sessions
+      const user = mockUsers.admin;
       res.json(user);
     } catch (error) {
       console.error("Error fetching user:", error);

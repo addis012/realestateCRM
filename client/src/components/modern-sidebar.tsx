@@ -113,14 +113,12 @@ export default function ModernSidebar() {
             <div className="flex items-center space-x-2">
               <Badge 
                 variant="secondary" 
-                className={`text-xs border-0 ${
-                  (user as any)?.role === 'superadmin' ? 'bg-red-600 text-white hover:bg-red-700' :
-                  (user as any)?.role === 'admin' ? 'bg-blue-600 text-white hover:bg-blue-700' :
-                  (user as any)?.role === 'supervisor' ? 'bg-emerald-600 text-white hover:bg-emerald-700' :
-                  'bg-purple-600 text-white hover:bg-purple-700'
-                }`}
+                className="text-xs bg-blue-600 text-white border-0 hover:bg-blue-700"
               >
-                {(user as any)?.role || 'Sales'}
+                {(user as any)?.role === 'superadmin' ? 'Super Admin' :
+                 (user as any)?.role === 'admin' ? 'Admin' :
+                 (user as any)?.role === 'supervisor' ? 'Supervisor' :
+                 (user as any)?.role === 'sales' ? 'Sales Agent' : 'Admin'}
               </Badge>
             </div>
           </div>
