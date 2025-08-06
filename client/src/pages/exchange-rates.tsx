@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { apiRequest } from "@/lib/queryClient";
 import { isUnauthorizedError } from "@/lib/authUtils";
-import Sidebar from "@/components/sidebar";
+import ModernSidebar from "@/components/modern-sidebar";
 import Header from "@/components/header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -131,7 +131,7 @@ export default function ExchangeRates() {
 
   return (
     <div className="flex h-screen bg-slate-50">
-      <Sidebar />
+      <ModernSidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header 
           title="Exchange Rates" 

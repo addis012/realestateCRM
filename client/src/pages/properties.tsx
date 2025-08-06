@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import Sidebar from "@/components/sidebar";
+import ModernSidebar from "@/components/modern-sidebar";
 import Header from "@/components/header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -59,7 +59,7 @@ export default function Properties() {
 
   return (
     <div className="flex h-screen bg-slate-50">
-      <Sidebar />
+      <ModernSidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header 
           title="Property Listings" 
