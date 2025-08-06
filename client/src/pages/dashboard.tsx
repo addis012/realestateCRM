@@ -10,6 +10,12 @@ import { Users, Building, Handshake, DollarSign, TrendingUp, ArrowUp } from "luc
 import SalesChart from "@/components/charts/sales-chart";
 import LeadSourceChart from "@/components/charts/lead-source-chart";
 import RoleSwitcher from "@/components/role-switcher";
+import { 
+  SuperAdminDashboard, 
+  AdminDashboard, 
+  SupervisorDashboard, 
+  SalesDashboard 
+} from "@/components/role-based-dashboard";
 
 export default function Dashboard() {
   const { toast } = useToast();
@@ -51,152 +57,30 @@ export default function Dashboard() {
         <Header title="Dashboard" subtitle={`Welcome back, ${(user as any)?.firstName || 'User'}! Here's what's happening with your business today.`} />
         
         {/* Role Switcher for Demo */}
-        {(user as any)?.role === 'admin' && (
-          <div className="mb-6">
-            <RoleSwitcher />
-          </div>
-        )}
+        <div className="mb-6">
+          <RoleSwitcher />
+        </div>
         
         <main className="flex-1 overflow-y-auto p-6 bg-gradient-to-br from-slate-50 to-slate-100/50">
-          {/* Enhanced Stats Cards with Skeleton Loading */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-blue-600 to-blue-700">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between text-white">
-                  <div>
-                    <p className="text-sm font-medium text-blue-100 mb-2">Total Leads</p>
-                    {statsLoading ? (
-                      <div className="h-9 w-20 bg-white/20 rounded animate-pulse mb-3"></div>
-                    ) : (
-                      <p className="text-3xl font-bold text-white mb-3">
-                        {(stats as any)?.totalLeads || 0}
-                      </p>
-                    )}
-                    <div className="flex items-center">
-                      <ArrowUp className="h-4 w-4 mr-1" />
-                      <span className="text-sm font-medium">12% from last month</span>
-                    </div>
-                  </div>
-                  <div className="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Users className="h-8 w-8 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+          {/* Role-Based Dashboard Content */}
+          {(user as any)?.role === 'superadmin' && (
+            <SuperAdminDashboard stats={stats} activities={activities || []} statsLoading={statsLoading} />
+          )}
+          
+          {(user as any)?.role === 'admin' && (
+            <AdminDashboard stats={stats} activities={activities || []} statsLoading={statsLoading} />
+          )}
+          
+          {(user as any)?.role === 'supervisor' && (
+            <SupervisorDashboard stats={stats} activities={activities || []} statsLoading={statsLoading} />
+          )}
+          
+          {(user as any)?.role === 'sales' && (
+            <SalesDashboard stats={stats} activities={activities || []} statsLoading={statsLoading} />
+          )}
 
-            <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-emerald-600 to-emerald-700">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between text-white">
-                  <div>
-                    <p className="text-sm font-medium text-emerald-100 mb-2">Active Properties</p>
-                    {statsLoading ? (
-                      <div className="h-9 w-20 bg-white/20 rounded animate-pulse mb-3"></div>
-                    ) : (
-                      <p className="text-3xl font-bold text-white mb-3">
-                        {(stats as any)?.activeProperties || 0}
-                      </p>
-                    )}
-                    <div className="flex items-center">
-                      <ArrowUp className="h-4 w-4 mr-1" />
-                      <span className="text-sm font-medium">8% from last month</span>
-                    </div>
-                  </div>
-                  <div className="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Building className="h-8 w-8 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-amber-600 to-orange-600">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between text-white">
-                  <div>
-                    <p className="text-sm font-medium text-amber-100 mb-2">Closed Deals</p>
-                    {statsLoading ? (
-                      <div className="h-9 w-20 bg-white/20 rounded animate-pulse mb-3"></div>
-                    ) : (
-                      <p className="text-3xl font-bold text-white mb-3">
-                        {(stats as any)?.closedDeals || 0}
-                      </p>
-                    )}
-                    <div className="flex items-center">
-                      <ArrowUp className="h-4 w-4 mr-1" />
-                      <span className="text-sm font-medium">23% from last month</span>
-                    </div>
-                  </div>
-                  <div className="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <Handshake className="h-8 w-8 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg bg-gradient-to-br from-purple-600 to-purple-700">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between text-white">
-                  <div>
-                    <p className="text-sm font-medium text-purple-100 mb-2">Total Commission</p>
-                    {statsLoading ? (
-                      <div className="h-9 w-24 bg-white/20 rounded animate-pulse mb-3"></div>
-                    ) : (
-                      <p className="text-3xl font-bold text-white mb-3">
-                        ${(stats as any)?.totalCommission?.toLocaleString() || "0"}
-                      </p>
-                    )}
-                    <div className="flex items-center">
-                      <ArrowUp className="h-4 w-4 mr-1" />
-                      <span className="text-sm font-medium">15% from last month</span>
-                    </div>
-                  </div>
-                  <div className="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <DollarSign className="h-8 w-8 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Enhanced Charts Row */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center justify-between text-gray-800">
-                  <div className="flex items-center space-x-2">
-                    <TrendingUp className="h-5 w-5 text-blue-600" />
-                    <span>Sales Performance</span>
-                  </div>
-                  <select className="text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                    <option>Last 6 months</option>
-                    <option>Last 12 months</option>
-                  </select>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <SalesChart />
-              </CardContent>
-            </Card>
-
-            <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
-              <CardHeader className="pb-4">
-                <CardTitle className="flex items-center justify-between text-gray-800">
-                  <div className="flex items-center space-x-2">
-                    <Users className="h-5 w-5 text-emerald-600" />
-                    <span>Lead Sources</span>
-                  </div>
-                  <button className="text-sm text-blue-600 hover:text-blue-700 font-medium px-3 py-1 rounded-md hover:bg-blue-50 transition-colors">
-                    View Details
-                  </button>
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <LeadSourceChart />
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Enhanced Recent Activity */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Enhanced Recent Activity for all roles */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-8">
             <div className="lg:col-span-2">
               <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
                 <CardHeader className="pb-4">
@@ -240,18 +124,91 @@ export default function Dashboard() {
               <CardHeader className="pb-4">
                 <CardTitle className="flex items-center space-x-2 text-gray-800">
                   <Users className="h-5 w-5 text-emerald-600" />
-                  <span>Top Performers</span>
+                  <span>Quick Access</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="text-center py-12">
-                    <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-xl flex items-center justify-center">
-                      <Users className="h-8 w-8 text-emerald-500" />
-                    </div>
-                    <p className="text-lg font-medium text-gray-600 mb-2">No performance data yet</p>
-                    <p className="text-sm text-gray-500">Performance metrics will appear here as deals are closed</p>
-                  </div>
+                <div className="space-y-3">
+                  {(user as any)?.role === 'superadmin' && (
+                    <>
+                      <button className="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center">
+                            <Users className="h-4 w-4 text-red-600" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium">Manage Tenants</p>
+                            <p className="text-xs text-gray-500">Add or configure tenants</p>
+                          </div>
+                        </div>
+                      </button>
+                      <button className="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <TrendingUp className="h-4 w-4 text-blue-600" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium">System Analytics</p>
+                            <p className="text-xs text-gray-500">View platform metrics</p>
+                          </div>
+                        </div>
+                      </button>
+                    </>
+                  )}
+                  
+                  {['admin', 'supervisor'].includes((user as any)?.role) && (
+                    <>
+                      <button className="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <Users className="h-4 w-4 text-blue-600" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium">Team Reports</p>
+                            <p className="text-xs text-gray-500">View team performance</p>
+                          </div>
+                        </div>
+                      </button>
+                      <button className="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
+                            <Building className="h-4 w-4 text-emerald-600" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium">Properties</p>
+                            <p className="text-xs text-gray-500">Manage listings</p>
+                          </div>
+                        </div>
+                      </button>
+                    </>
+                  )}
+                  
+                  {(user as any)?.role === 'sales' && (
+                    <>
+                      <button className="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                            <Users className="h-4 w-4 text-blue-600" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium">My Leads</p>
+                            <p className="text-xs text-gray-500">View assigned leads</p>
+                          </div>
+                        </div>
+                      </button>
+                      <button className="w-full text-left p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div className="flex items-center space-x-3">
+                          <div className="w-8 h-8 bg-emerald-100 rounded-lg flex items-center justify-center">
+                            <Handshake className="h-4 w-4 text-emerald-600" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium">Active Deals</p>
+                            <p className="text-xs text-gray-500">Track your deals</p>
+                          </div>
+                        </div>
+                      </button>
+                    </>
+                  )}
                 </div>
               </CardContent>
             </Card>

@@ -12,7 +12,9 @@ const roles = [
 ];
 
 export default function RoleSwitcher() {
-  const [selectedRole, setSelectedRole] = useState("admin");
+  const [selectedRole, setSelectedRole] = useState(() => 
+    localStorage.getItem('demo-role') || "admin"
+  );
 
   const handleRoleChange = (role: string) => {
     setSelectedRole(role);
