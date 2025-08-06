@@ -10,10 +10,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // await setupAuth(app);
 
   // Auth routes - mock different users for demo based on query parameter
-  app.get('/api/auth/user', async (req: any, res) => {
+  app.get('/api/auth/user/:role?', async (req: any, res) => {
     try {
       // Mock different user roles for demo
-      const roleParam = req.query.role || 'admin';
+      const roleParam = req.params.role || req.query.role || 'admin';
       
       const mockUsers = {
         superadmin: {
