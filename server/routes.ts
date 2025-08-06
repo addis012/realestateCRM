@@ -90,15 +90,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Dashboard stats
-  app.get('/api/dashboard/stats', isAuthenticated, async (req: any, res) => {
+  app.get('/api/dashboard/stats', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user?.tenantId) {
-        return res.status(400).json({ message: "User not associated with a tenant" });
-      }
-
-      const stats = await storage.getDashboardStats(user.tenantId);
+      // Mock user data for demo - using fixed tenant
+      const stats = await storage.getDashboardStats('tenant-1');
       res.json(stats);
     } catch (error) {
       console.error("Error fetching dashboard stats:", error);
@@ -107,17 +102,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Lead management routes
-  app.get('/api/leads', isAuthenticated, async (req: any, res) => {
+  app.get('/api/leads', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user?.tenantId) {
-        return res.status(400).json({ message: "User not associated with a tenant" });
-      }
-
+      // Mock user data for demo - using fixed tenant
       const { status, assignedTo } = req.query;
       const filters = { status, assignedTo };
-      const leads = await storage.getLeads(user.tenantId, filters);
+      const leads = await storage.getLeads('tenant-1', filters);
       res.json(leads);
     } catch (error) {
       console.error("Error fetching leads:", error);
@@ -125,26 +115,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/leads', isAuthenticated, async (req: any, res) => {
+  app.post('/api/leads', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user?.tenantId) {
-        return res.status(400).json({ message: "User not associated with a tenant" });
-      }
+      // Mock user data for demo - using fixed tenant and user
+      const mockUserId = '1';
+      const mockTenantId = 'tenant-1';
 
       const validatedData = insertLeadSchema.parse({
         ...req.body,
-        tenantId: user.tenantId,
-        createdBy: userId,
+        tenantId: mockTenantId,
+        createdBy: mockUserId,
       });
 
       const lead = await storage.createLead(validatedData);
       
       // Log activity
       await storage.createActivity({
-        tenantId: user.tenantId,
-        userId,
+        tenantId: mockTenantId,
+        userId: mockUserId,
         entityType: "lead",
         entityId: lead.id,
         action: "created",
@@ -158,23 +146,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put('/api/leads/:id', isAuthenticated, async (req: any, res) => {
+  app.put('/api/leads/:id', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user?.tenantId) {
-        return res.status(400).json({ message: "User not associated with a tenant" });
-      }
+      // Mock user data for demo - using fixed tenant and user
+      const mockUserId = '1';
+      const mockTenantId = 'tenant-1';
 
       const { id } = req.params;
       const validatedData = insertLeadSchema.partial().parse(req.body);
 
-      const lead = await storage.updateLead(id, user.tenantId, validatedData);
+      const lead = await storage.updateLead(id, mockTenantId, validatedData);
       
       // Log activity
       await storage.createActivity({
-        tenantId: user.tenantId,
-        userId,
+        tenantId: mockTenantId,
+        userId: mockUserId,
         entityType: "lead",
         entityId: lead.id,
         action: "updated",
@@ -188,16 +174,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.delete('/api/leads/:id', isAuthenticated, async (req: any, res) => {
+  app.delete('/api/leads/:id', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user?.tenantId) {
-        return res.status(400).json({ message: "User not associated with a tenant" });
-      }
+      // Mock user data for demo - using fixed tenant
+      const mockTenantId = 'tenant-1';
 
       const { id } = req.params;
-      await storage.deleteLead(id, user.tenantId);
+      await storage.deleteLead(id, mockTenantId);
       res.status(204).send();
     } catch (error) {
       console.error("Error deleting lead:", error);
@@ -206,17 +189,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Property management routes
-  app.get('/api/properties', isAuthenticated, async (req: any, res) => {
+  app.get('/api/properties', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user?.tenantId) {
-        return res.status(400).json({ message: "User not associated with a tenant" });
-      }
-
+      // Mock user data for demo - using fixed tenant
       const { type, location, status } = req.query;
       const filters = { type, location, status };
-      const properties = await storage.getProperties(user.tenantId, filters);
+      const properties = await storage.getProperties('tenant-1', filters);
       res.json(properties);
     } catch (error) {
       console.error("Error fetching properties:", error);
@@ -224,26 +202,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/properties', isAuthenticated, async (req: any, res) => {
+  app.post('/api/properties', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user?.tenantId) {
-        return res.status(400).json({ message: "User not associated with a tenant" });
-      }
+      // Mock user data for demo - using fixed tenant and user
+      const mockUserId = '1';
+      const mockTenantId = 'tenant-1';
 
       const validatedData = insertPropertySchema.parse({
         ...req.body,
-        tenantId: user.tenantId,
-        createdBy: userId,
+        tenantId: mockTenantId,
+        createdBy: mockUserId,
       });
 
       const property = await storage.createProperty(validatedData);
       
       // Log activity
       await storage.createActivity({
-        tenantId: user.tenantId,
-        userId,
+        tenantId: mockTenantId,
+        userId: mockUserId,
         entityType: "property",
         entityId: property.id,
         action: "created",
@@ -257,18 +233,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put('/api/properties/:id', isAuthenticated, async (req: any, res) => {
+  app.put('/api/properties/:id', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user?.tenantId) {
-        return res.status(400).json({ message: "User not associated with a tenant" });
-      }
+      // Mock user data for demo - using fixed tenant
+      const mockTenantId = 'tenant-1';
 
       const { id } = req.params;
       const validatedData = insertPropertySchema.partial().parse(req.body);
 
-      const property = await storage.updateProperty(id, user.tenantId, validatedData);
+      const property = await storage.updateProperty(id, mockTenantId, validatedData);
       res.json(property);
     } catch (error) {
       console.error("Error updating property:", error);
@@ -277,17 +250,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Deal management routes
-  app.get('/api/deals', isAuthenticated, async (req: any, res) => {
+  app.get('/api/deals', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user?.tenantId) {
-        return res.status(400).json({ message: "User not associated with a tenant" });
-      }
-
+      // Mock user data for demo - using fixed tenant
       const { status, agentId } = req.query;
       const filters = { status, agentId };
-      const deals = await storage.getDeals(user.tenantId, filters);
+      const deals = await storage.getDeals('tenant-1', filters);
       res.json(deals);
     } catch (error) {
       console.error("Error fetching deals:", error);
@@ -295,26 +263,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/deals', isAuthenticated, async (req: any, res) => {
+  app.post('/api/deals', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user?.tenantId) {
-        return res.status(400).json({ message: "User not associated with a tenant" });
-      }
+      // Mock user data for demo - using fixed tenant and user
+      const mockUserId = '1';
+      const mockTenantId = 'tenant-1';
 
       const validatedData = insertDealSchema.parse({
         ...req.body,
-        tenantId: user.tenantId,
-        createdBy: userId,
+        tenantId: mockTenantId,
+        createdBy: mockUserId,
       });
 
       const deal = await storage.createDeal(validatedData);
       
       // Log activity
       await storage.createActivity({
-        tenantId: user.tenantId,
-        userId,
+        tenantId: mockTenantId,
+        userId: mockUserId,
         entityType: "deal",
         entityId: deal.id,
         action: "created",
@@ -329,15 +295,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Exchange rate routes
-  app.get('/api/exchange-rates', isAuthenticated, async (req: any, res) => {
+  app.get('/api/exchange-rates', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user?.tenantId) {
-        return res.status(400).json({ message: "User not associated with a tenant" });
-      }
-
-      const rate = await storage.getExchangeRate(user.tenantId);
+      // Mock user data for demo - using fixed tenant
+      const rate = await storage.getExchangeRate('tenant-1');
       res.json(rate || { buyRate: "158", sellRate: "179" });
     } catch (error) {
       console.error("Error fetching exchange rates:", error);
@@ -345,21 +306,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.put('/api/exchange-rates', isAuthenticated, async (req: any, res) => {
+  app.put('/api/exchange-rates', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user?.tenantId) {
-        return res.status(400).json({ message: "User not associated with a tenant" });
-      }
+      // Mock user data for demo - using fixed tenant and user
+      const mockUserId = '1';
+      const mockTenantId = 'tenant-1';
 
       const validatedData = insertExchangeRateSchema.parse({
         ...req.body,
-        tenantId: user.tenantId,
-        updatedBy: userId,
+        tenantId: mockTenantId,
+        updatedBy: mockUserId,
       });
 
-      const rate = await storage.updateExchangeRate(user.tenantId, validatedData);
+      const rate = await storage.updateExchangeRate(mockTenantId, validatedData);
       res.json(rate);
     } catch (error) {
       console.error("Error updating exchange rates:", error);
@@ -368,15 +327,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Activity log
-  app.get('/api/activities', isAuthenticated, async (req: any, res) => {
+  app.get('/api/activities', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      if (!user?.tenantId) {
-        return res.status(400).json({ message: "User not associated with a tenant" });
-      }
-
-      const activities = await storage.getActivities(user.tenantId, 20);
+      // Mock user data for demo - using fixed tenant
+      const activities = await storage.getActivities('tenant-1', 20);
       res.json(activities);
     } catch (error) {
       console.error("Error fetching activities:", error);
