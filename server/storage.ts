@@ -338,7 +338,8 @@ export let storage: IStorage = new DatabaseStorage(); // Default fallback
 // Initialize storage with MongoDB preference
 createStorage().then(storageInstance => {
   storage = storageInstance;
+  console.log('Storage initialization completed successfully');
 }).catch(error => {
   console.error('Storage initialization error:', error);
-  // Keep PostgreSQL as fallback
+  console.log('Continuing with PostgreSQL fallback');
 });
