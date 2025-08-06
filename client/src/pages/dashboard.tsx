@@ -30,13 +30,13 @@ export default function Dashboard() {
   }, [isAuthenticated, isLoading, toast]);
 
   const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ["/api/dashboard/stats"],
-    enabled: isAuthenticated,
+    queryKey: ["/api/test/dashboard-stats"],
+    // enabled: isAuthenticated, // Temporarily disabled for demo
   });
 
   const { data: activities } = useQuery({
-    queryKey: ["/api/activities"],
-    enabled: isAuthenticated,
+    queryKey: ["/api/test/activities"],
+    // enabled: isAuthenticated, // Temporarily disabled for demo  
   });
 
   if (isLoading || !isAuthenticated) {

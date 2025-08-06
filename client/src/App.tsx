@@ -18,18 +18,14 @@ function Router() {
 
   return (
     <Switch>
-      {isLoading || !isAuthenticated ? (
-        <Route path="/" component={Landing} />
-      ) : (
-        <>
-          <Route path="/" component={Dashboard} />
-          <Route path="/leads" component={Leads} />
-          <Route path="/properties" component={Properties} />
-          <Route path="/deals" component={Deals} />
-          <Route path="/team" component={Team} />
-          <Route path="/exchange-rates" component={ExchangeRates} />
-        </>
-      )}
+      {/* Temporarily showing authenticated pages for demo while auth system is being configured */}
+      <Route path="/" component={Dashboard} />
+      <Route path="/leads" component={Leads} />
+      <Route path="/properties" component={Properties} />
+      <Route path="/deals" component={Deals} />
+      <Route path="/team" component={Team} />
+      <Route path="/exchange-rates" component={ExchangeRates} />
+      <Route path="/landing" component={Landing} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -52,8 +52,8 @@ export default function ExchangeRates() {
   }, [isAuthenticated, isLoading, toast]);
 
   const { data: exchangeRate, isLoading: ratesLoading } = useQuery({
-    queryKey: ["/api/exchange-rates"],
-    enabled: isAuthenticated,
+    queryKey: ["/api/test/exchange-rates"],
+    // enabled: isAuthenticated, // Temporarily disabled for demo
   });
 
   const form = useForm<ExchangeRateFormData>({

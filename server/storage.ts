@@ -121,17 +121,19 @@ export class DatabaseStorage implements IStorage {
 
   // Lead operations
   async getLeads(tenantId: string, filters?: { status?: string; assignedTo?: string }): Promise<Lead[]> {
-    let query = db.select().from(leads).where(eq(leads.tenantId, tenantId));
+    const conditions = [eq(leads.tenantId, tenantId)];
     
     if (filters?.status) {
-      query = query.where(and(eq(leads.tenantId, tenantId), eq(leads.status, filters.status as any)));
+      conditions.push(eq(leads.status, filters.status as any));
     }
     
     if (filters?.assignedTo) {
-      query = query.where(and(eq(leads.tenantId, tenantId), eq(leads.assignedTo, filters.assignedTo)));
+      conditions.push(eq(leads.assignedTo, filters.assignedTo));
     }
     
-    return await query.orderBy(desc(leads.createdAt));
+    return await db.select().from(leads)
+      .where(and(...conditions))
+      .orderBy(desc(leads.createdAt));
   }
 
   async getLead(id: string, tenantId: string): Promise<Lead | undefined> {
@@ -162,17 +164,19 @@ export class DatabaseStorage implements IStorage {
 
   // Property operations
   async getProperties(tenantId: string, filters?: { type?: string; location?: string; status?: string }): Promise<Property[]> {
-    let query = db.select().from(properties).where(eq(properties.tenantId, tenantId));
+    const conditions = [eq(properties.tenantId, tenantId)];
     
     if (filters?.type) {
-      query = query.where(and(eq(properties.tenantId, tenantId), eq(properties.type, filters.type as any)));
+      conditions.push(eq(properties.type, filters.type as any));
     }
     
     if (filters?.status) {
-      query = query.where(and(eq(properties.tenantId, tenantId), eq(properties.status, filters.status as any)));
+      conditions.push(eq(properties.status, filters.status as any));
     }
     
-    return await query.orderBy(desc(properties.createdAt));
+    return await db.select().from(properties)
+      .where(and(...conditions))
+      .orderBy(desc(properties.createdAt));
   }
 
   async getProperty(id: string, tenantId: string): Promise<Property | undefined> {
@@ -203,17 +207,19 @@ export class DatabaseStorage implements IStorage {
 
   // Deal operations
   async getDeals(tenantId: string, filters?: { status?: string; agentId?: string }): Promise<Deal[]> {
-    let query = db.select().from(deals).where(eq(deals.tenantId, tenantId));
+    const conditions = [eq(deals.tenantId, tenantId)];
     
     if (filters?.status) {
-      query = query.where(and(eq(deals.tenantId, tenantId), eq(deals.status, filters.status as any)));
+      conditions.push(eq(deals.status, filters.status as any));
     }
     
     if (filters?.agentId) {
-      query = query.where(and(eq(deals.tenantId, tenantId), eq(deals.agentId, filters.agentId)));
+      conditions.push(eq(deals.agentId, filters.agentId));
     }
     
-    return await query.orderBy(desc(deals.createdAt));
+    return await db.select().from(deals)
+      .where(and(...conditions))
+      .orderBy(desc(deals.createdAt));
   }
 
   async getDeal(id: string, tenantId: string): Promise<Deal | undefined> {

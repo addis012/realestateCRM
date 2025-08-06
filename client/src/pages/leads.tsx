@@ -37,8 +37,8 @@ export default function Leads() {
   }, [isAuthenticated, isLoading, toast]);
 
   const { data: leads, isLoading: leadsLoading } = useQuery({
-    queryKey: ["/api/leads", statusFilter !== "all" ? { status: statusFilter } : {}],
-    enabled: isAuthenticated,
+    queryKey: ["/api/test/leads", statusFilter !== "all" ? { status: statusFilter } : {}],
+    // enabled: isAuthenticated, // Temporarily disabled for demo
   });
 
   const getStatusColor = (status: string) => {

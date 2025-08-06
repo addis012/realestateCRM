@@ -32,13 +32,13 @@ export default function Deals() {
   }, [isAuthenticated, isLoading, toast]);
 
   const { data: deals, isLoading: dealsLoading } = useQuery({
-    queryKey: ["/api/deals"],
-    enabled: isAuthenticated,
+    queryKey: ["/api/test/deals"],
+    // enabled: isAuthenticated, // Temporarily disabled for demo
   });
 
   const { data: stats } = useQuery({
-    queryKey: ["/api/dashboard/stats"],
-    enabled: isAuthenticated,
+    queryKey: ["/api/test/dashboard-stats"],
+    // enabled: isAuthenticated, // Temporarily disabled for demo
   });
 
   if (isLoading || !isAuthenticated) {

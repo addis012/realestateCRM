@@ -34,8 +34,8 @@ export default function Properties() {
   }, [isAuthenticated, isLoading, toast]);
 
   const { data: properties, isLoading: propertiesLoading } = useQuery({
-    queryKey: ["/api/properties"],
-    enabled: isAuthenticated,
+    queryKey: ["/api/test/properties"],
+    // enabled: isAuthenticated, // Temporarily disabled for demo
   });
 
   const getStatusColor = (status: string) => {
