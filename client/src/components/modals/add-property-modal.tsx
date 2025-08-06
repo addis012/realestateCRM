@@ -68,7 +68,7 @@ export default function AddPropertyModal({ open, onOpenChange }: AddPropertyModa
     mutationFn: async (data: AddPropertyFormData) => {
       const payload = {
         ...data,
-        price: parseFloat(data.price),
+        price: data.price, // Keep as string for decimal field
         bedrooms: data.bedrooms ? parseInt(data.bedrooms) : null,
         bathrooms: data.bathrooms ? parseInt(data.bathrooms) : null,
         squareFeet: data.squareFeet ? parseInt(data.squareFeet) : null,

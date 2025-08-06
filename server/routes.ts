@@ -9,19 +9,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth middleware - temporarily disabled for demo
   // await setupAuth(app);
 
-  // Auth routes - mock user for demo
+  // Auth routes - mock different users for demo based on query parameter
   app.get('/api/auth/user', async (req: any, res) => {
     try {
-      // Mock user data for demo
-      const mockUser = {
-        id: '1',
-        firstName: 'John',
-        lastName: 'Anderson',
-        email: 'admin@primerealty.com',
-        role: 'admin',
-        profileImageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40'
+      // Mock different user roles for demo
+      const roleParam = req.query.role || 'admin';
+      
+      const mockUsers = {
+        superadmin: {
+          id: '1',
+          firstName: 'Super',
+          lastName: 'Admin',
+          email: 'superadmin@primerealty.com',
+          role: 'superadmin',
+          profileImageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40'
+        },
+        admin: {
+          id: '2',
+          firstName: 'John',
+          lastName: 'Anderson',
+          email: 'admin@primerealty.com',
+          role: 'admin',
+          profileImageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40'
+        },
+        supervisor: {
+          id: '3',
+          firstName: 'Sarah',
+          lastName: 'Wilson',
+          email: 'supervisor@primerealty.com',
+          role: 'supervisor',
+          profileImageUrl: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40'
+        },
+        sales: {
+          id: '4',
+          firstName: 'Mike',
+          lastName: 'Davis',
+          email: 'sales@primerealty.com',
+          role: 'sales',
+          profileImageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40'
+        }
       };
-      res.json(mockUser);
+      
+      const user = mockUsers[roleParam as keyof typeof mockUsers] || mockUsers.admin;
+      res.json(user);
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });

@@ -14,17 +14,17 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/useAuth";
 
 const navigation = [
-  { name: "Dashboard", href: "/", icon: BarChart3 },
-  { name: "Lead Management", href: "/leads", icon: Users },
-  { name: "Properties", href: "/properties", icon: Building },
-  { name: "Deals & Commission", href: "/deals", icon: Handshake },
-  { name: "Team Management", href: "/team", icon: UserCheck },
-  { name: "Reports & Analytics", href: "/reports", icon: TrendingUp },
+  { name: "Dashboard", href: "/", icon: BarChart3, roles: ["superadmin", "admin", "supervisor", "sales"] },
+  { name: "Lead Management", href: "/leads", icon: Users, roles: ["superadmin", "admin", "supervisor", "sales"] },
+  { name: "Properties", href: "/properties", icon: Building, roles: ["superadmin", "admin", "supervisor", "sales"] },
+  { name: "Deals & Commission", href: "/deals", icon: Handshake, roles: ["superadmin", "admin", "supervisor", "sales"] },
+  { name: "Team Management", href: "/team", icon: UserCheck, roles: ["superadmin", "admin", "supervisor"] },
+  { name: "Reports & Analytics", href: "/reports", icon: TrendingUp, roles: ["superadmin", "admin", "supervisor"] },
 ];
 
 const settings = [
-  { name: "Exchange Rates", href: "/exchange-rates", icon: ArrowLeftRight },
-  { name: "Branding", href: "/branding", icon: Palette },
+  { name: "Exchange Rates", href: "/exchange-rates", icon: ArrowLeftRight, roles: ["superadmin", "admin"] },
+  { name: "Branding", href: "/branding", icon: Palette, roles: ["superadmin", "admin"] },
 ];
 
 export default function Sidebar() {
@@ -34,6 +34,15 @@ export default function Sidebar() {
   const handleLogout = () => {
     window.location.href = "/api/logout";
   };
+
+  // Filter navigation based on user role
+  const filteredNavigation = navigation.filter(item => 
+    (user as any)?.role ? item.roles.includes((user as any).role) : true
+  );
+  
+  const filteredSettings = settings.filter(item => 
+    (user as any)?.role ? item.roles.includes((user as any).role) : true
+  );
 
   return (
     <div className="w-64 bg-white shadow-lg border-r border-gray-200 flex flex-col">
@@ -45,7 +54,7 @@ export default function Sidebar() {
           </div>
           <div>
             <h1 className="text-lg font-semibold text-gray-900">Prime Realty</h1>
-            <p className="text-xs text-gray-500">{user?.role || "Admin"} Dashboard</p>
+            <p className="text-xs text-gray-500">{(user as any)?.role || "Admin"} Dashboard</p>
           </div>
         </div>
       </div>
@@ -54,7 +63,7 @@ export default function Sidebar() {
       <nav className="flex-1 mt-6">
         <div className="px-3">
           <div className="space-y-1">
-            {navigation.map((item) => {
+            {filteredNavigation.map((item) => {
               const isActive = location === item.href;
               return (
                 <Link key={item.name} href={item.href}>
@@ -94,7 +103,7 @@ export default function Sidebar() {
             Settings
           </h3>
           <div className="mt-2 space-y-1">
-            {settings.map((item) => {
+            {filteredSettings.map((item) => {
               const isActive = location === item.href;
               return (
                 <Link key={item.name} href={item.href}>
@@ -119,16 +128,16 @@ export default function Sidebar() {
       <div className="p-4 border-t border-gray-200">
         <div className="flex items-center space-x-3">
           <img 
-            src={user?.profileImageUrl || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40"} 
+            src={(user as any)?.profileImageUrl || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40"} 
             alt="User Profile" 
             className="w-10 h-10 rounded-full object-cover"
           />
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-gray-900 truncate">
-              {user?.firstName || "John"} {user?.lastName || "Anderson"}
+              {(user as any)?.firstName || "John"} {(user as any)?.lastName || "Anderson"}
             </p>
             <p className="text-xs text-gray-500 truncate">
-              {user?.email || "admin@primerealty.com"}
+              {(user as any)?.email || "admin@primerealty.com"}
             </p>
           </div>
           <Button 

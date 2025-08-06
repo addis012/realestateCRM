@@ -9,10 +9,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Building, Handshake, DollarSign, TrendingUp, ArrowUp } from "lucide-react";
 import SalesChart from "@/components/charts/sales-chart";
 import LeadSourceChart from "@/components/charts/lead-source-chart";
+import RoleSwitcher from "@/components/role-switcher";
 
 export default function Dashboard() {
   const { toast } = useToast();
-  const { isAuthenticated, isLoading } = useAuth();
+  const { user, isAuthenticated, isLoading } = useAuth();
 
   // Redirect to home if not authenticated
   useEffect(() => {
@@ -31,12 +32,12 @@ export default function Dashboard() {
 
   const { data: stats, isLoading: statsLoading } = useQuery({
     queryKey: ["/api/test/dashboard-stats"],
-    // enabled: isAuthenticated, // Temporarily disabled for demo
+    enabled: isAuthenticated,
   });
 
   const { data: activities } = useQuery({
     queryKey: ["/api/test/activities"],
-    // enabled: isAuthenticated, // Temporarily disabled for demo  
+    enabled: isAuthenticated,
   });
 
   if (isLoading || !isAuthenticated) {
@@ -47,7 +48,14 @@ export default function Dashboard() {
     <div className="flex h-screen bg-slate-50">
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Header title="Dashboard" subtitle="Welcome back! Here's what's happening with your business today." />
+        <Header title="Dashboard" subtitle={`Welcome back, ${(user as any)?.firstName || 'User'}! Here's what's happening with your business today.`} />
+        
+        {/* Role Switcher for Demo */}
+        {(user as any)?.role === 'admin' && (
+          <div className="mb-6">
+            <RoleSwitcher />
+          </div>
+        )}
         
         <main className="flex-1 overflow-y-auto p-6">
           {/* Stats Cards */}
@@ -58,7 +66,7 @@ export default function Dashboard() {
                   <div>
                     <p className="text-sm font-medium text-gray-600">Total Leads</p>
                     <p className="text-3xl font-semibold text-gray-900">
-                      {statsLoading ? "..." : stats?.totalLeads || 0}
+                      {statsLoading ? "..." : (stats as any)?.totalLeads || 0}
                     </p>
                     <p className="text-sm text-success flex items-center">
                       <ArrowUp className="h-4 w-4 mr-1" />
@@ -78,7 +86,7 @@ export default function Dashboard() {
                   <div>
                     <p className="text-sm font-medium text-gray-600">Active Properties</p>
                     <p className="text-3xl font-semibold text-gray-900">
-                      {statsLoading ? "..." : stats?.activeProperties || 0}
+                      {statsLoading ? "..." : (stats as any)?.activeProperties || 0}
                     </p>
                     <p className="text-sm text-success flex items-center">
                       <ArrowUp className="h-4 w-4 mr-1" />
@@ -98,7 +106,7 @@ export default function Dashboard() {
                   <div>
                     <p className="text-sm font-medium text-gray-600">Closed Deals</p>
                     <p className="text-3xl font-semibold text-gray-900">
-                      {statsLoading ? "..." : stats?.closedDeals || 0}
+                      {statsLoading ? "..." : (stats as any)?.closedDeals || 0}
                     </p>
                     <p className="text-sm text-success flex items-center">
                       <ArrowUp className="h-4 w-4 mr-1" />
@@ -118,7 +126,7 @@ export default function Dashboard() {
                   <div>
                     <p className="text-sm font-medium text-gray-600">Total Commission</p>
                     <p className="text-3xl font-semibold text-gray-900">
-                      ${statsLoading ? "..." : stats?.totalCommission?.toLocaleString() || "0"}
+                      ${statsLoading ? "..." : (stats as any)?.totalCommission?.toLocaleString() || "0"}
                     </p>
                     <p className="text-sm text-success flex items-center">
                       <ArrowUp className="h-4 w-4 mr-1" />
@@ -172,8 +180,8 @@ export default function Dashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {activities && activities.length > 0 ? (
-                      activities.map((activity: any) => (
+                    {activities && (activities as any[]).length > 0 ? (
+                      (activities as any[]).map((activity: any) => (
                         <div key={activity.id} className="flex items-start space-x-3">
                           <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
                             <TrendingUp className="h-4 w-4 text-white" />
