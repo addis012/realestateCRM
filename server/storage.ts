@@ -317,4 +317,28 @@ export class DatabaseStorage implements IStorage {
   }
 }
 
-export const storage = new DatabaseStorage();
+import { MongoStorage } from './mongoStorage';
+
+// Try MongoDB first, fallback to PostgreSQL if it fails
+async function createStorage(): Promise<IStorage> {
+  try {
+    const mongoStorage = new MongoStorage();
+    // Test MongoDB connection
+    await mongoStorage.getDashboardStats('test-connection');
+    console.log('Using MongoDB storage');
+    return mongoStorage;
+  } catch (error) {
+    console.warn('MongoDB connection failed, falling back to PostgreSQL:', error instanceof Error ? error.message : 'Unknown error');
+    return new DatabaseStorage();
+  }
+}
+
+export let storage: IStorage = new DatabaseStorage(); // Default fallback
+
+// Initialize storage with MongoDB preference
+createStorage().then(storageInstance => {
+  storage = storageInstance;
+}).catch(error => {
+  console.error('Storage initialization error:', error);
+  // Keep PostgreSQL as fallback
+});
