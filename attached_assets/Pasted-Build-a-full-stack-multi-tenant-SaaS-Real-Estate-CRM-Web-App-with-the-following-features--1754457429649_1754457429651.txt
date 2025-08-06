@@ -1,0 +1,72 @@
+Build a full-stack, multi-tenant SaaS Real Estate CRM Web App with the following features:
+
+### 🌐 GENERAL OVERVIEW
+- Multi-tenant architecture (SaaS)
+- Each tenant (client) can:
+  - Have their own subdomain (e.g. company1.mycrm.com) or custom domain (e.g. www.company1.com)
+  - Use their own branding (logo, color theme)
+  - Have isolated data (leads, users, properties, etc.)
+
+### 🔐 AUTHENTICATION & TENANT MANAGEMENT
+- Central login and signup system for tenants (real estate companies)
+- Superadmin panel to:
+  - Create/disable tenants
+  - View billing and usage per tenant
+- Each tenant can create 4 roles:
+  - Admin
+  - Supervisor
+  - Sales Agent
+- Use JWT-based auth with role-based access control
+- Isolate each tenant's data using tenant ID
+
+### 🏠 CORE FEATURES FOR EACH TENANT
+
+1. **Lead Management**
+   - Add/edit leads with fields: name, phone, budget, property interest, status
+   - Assign leads to agents
+   - Activity log per lead (calls, visits, follow-ups)
+
+2. **Property Listings**
+   - Admin/Supervisor can add/edit listings
+   - Sales agents can view listings and match them to leads
+   - Fields: title, type, location, price, availability, image, description
+
+3. **Deal & Commission Tracking**
+   - Record closed deals: sale price, commission %, deal date
+   - Admin sets exchange rate (buy $1=158 ETB, sell $1=179 ETB)
+   - CRM calculates profit, margin, and agent commission
+
+4. **User & Team Management**
+   - Admin invites users and assigns roles (Admin, Supervisor, Sales)
+   - Supervisor oversees sales agents and reviews lead follow-ups
+   - Sales can only see their assigned leads and listings
+
+5. **Dashboard & Reporting**
+   - Custom dashboard per role:
+     - Admin: team performance, sales summary
+     - Supervisor: agent follow-up tracking
+     - Sales: personal lead status, upcoming tasks
+   - Charts and tables: leads by status, sales per month, commissions
+
+### 🌍 SAAS PLATFORM FEATURES
+
+- Multi-tenant routing (e.g. subdomain or custom domain per tenant)
+- Theming system per tenant: store brand colors, logo, and apply via CSS variables or Tailwind
+- Superadmin dashboard:
+  - Manage all tenants
+  - View CRM usage, active users per tenant
+  - Billing (optional: Stripe or custom logic)
+
+### 🔧 TECHNOLOGY STACK
+
+- Frontend: React (with TailwindCSS)
+- Backend: Node.js + Express
+- Database: MongoDB (with tenantID filtering)
+- Auth: JWT with role-based access
+- Subdomain support: Use Express middleware and DNS mapping
+- Deployment-ready for platforms like Render, Vercel, or VPS (NGINX)
+
+Include:
+- CRUD APIs for all core entities (users, leads, listings, deals)
+- Admin UI per role
+- Commented code structure
