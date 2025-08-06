@@ -10,6 +10,14 @@ The application supports role-based access control with four user roles (superad
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+
+**January 6, 2025**: Successfully migrated Real Estate CRM from Replit Agent to Replit environment
+- Configured MongoDB Atlas database connection using environment variables
+- Set up secure credential storage using Replit Secrets
+- Environment variables: MONGODB_URI, SESSION_SECRET, DATABASE_URL (PostgreSQL fallback)
+- Application now uses MongoDB as primary storage with PostgreSQL fallback
+
 ## System Architecture
 
 ### Frontend Architecture
@@ -30,9 +38,10 @@ Preferred communication style: Simple, everyday language.
 - **Development**: Hot reload with Vite integration for seamless development experience
 
 ### Database & ORM
-- **Database**: PostgreSQL for reliable data persistence
-- **ORM**: Drizzle ORM with Drizzle Kit for schema management and migrations
-- **Connection**: Neon serverless PostgreSQL with connection pooling
+- **Primary Database**: MongoDB Atlas for scalable document storage
+- **Fallback Database**: PostgreSQL for reliable data persistence  
+- **MongoDB Connection**: Direct connection using mongodb driver with secure environment variables
+- **PostgreSQL ORM**: Drizzle ORM with Drizzle Kit for schema management and migrations
 - **Schema Design**: Multi-tenant architecture with tenant isolation via tenant ID
 - **Data Models**: Users, tenants, leads, properties, deals, exchange rates, activities, and sessions
 
@@ -60,9 +69,11 @@ Preferred communication style: Simple, everyday language.
 ## External Dependencies
 
 ### Database & Storage
-- **Neon PostgreSQL**: Serverless PostgreSQL database with automatic scaling
-- **Database Connection**: @neondatabase/serverless for WebSocket connections
+- **MongoDB Atlas**: Primary cloud database with automatic scaling and replication
+- **Neon PostgreSQL**: Fallback serverless PostgreSQL database with automatic scaling
+- **Database Connection**: mongodb driver for primary storage, @neondatabase/serverless for fallback
 - **Session Store**: PostgreSQL-backed session storage for secure session management
+- **Environment Variables**: Secure credential storage using Replit Secrets
 
 ### Authentication Services
 - **Replit Auth**: OpenID Connect provider for user authentication

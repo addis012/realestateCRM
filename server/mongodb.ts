@@ -1,6 +1,6 @@
 import { MongoClient, Db } from 'mongodb';
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://addis:a1e2y3t4@cluster0.qa1qptk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const MONGODB_URI = process.env.MONGODB_URI;
 
 let client: MongoClient;
 let db: Db;
@@ -8,6 +8,10 @@ let db: Db;
 export async function connectToMongoDB(): Promise<Db> {
   if (db) {
     return db;
+  }
+
+  if (!MONGODB_URI) {
+    throw new Error('MONGODB_URI environment variable is not set');
   }
 
   try {

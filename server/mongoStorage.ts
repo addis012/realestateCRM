@@ -23,7 +23,11 @@ export class MongoStorage implements IStorage {
 
   private async getDb(): Promise<Db> {
     if (!this.db) {
-      const MONGODB_URI = 'mongodb+srv://addis:a1e2y3t4@cluster0.qa1qptk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+      const MONGODB_URI = process.env.MONGODB_URI;
+      
+      if (!MONGODB_URI) {
+        throw new Error('MONGODB_URI environment variable is not set');
+      }
       
       this.client = new MongoClient(MONGODB_URI, {
         tls: true,
