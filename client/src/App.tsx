@@ -18,8 +18,15 @@ function Router() {
 
   return (
     <Switch>
-      {/* Temporarily showing authenticated pages for demo while auth system is being configured */}
+      {/* Dashboard routes - all redirect to main dashboard with role switching */}
       <Route path="/" component={Dashboard} />
+      <Route path="/dashboard" component={Dashboard} />
+      <Route path="/admin" component={Dashboard} />
+      <Route path="/supervisor" component={Dashboard} />
+      <Route path="/sales" component={Dashboard} />
+      <Route path="/superadmin" component={Dashboard} />
+      
+      {/* Feature pages */}
       <Route path="/leads" component={Leads} />
       <Route path="/properties" component={Properties} />
       <Route path="/deals" component={Deals} />

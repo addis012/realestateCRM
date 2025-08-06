@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -20,6 +21,21 @@ import {
 export default function Dashboard() {
   const { toast } = useToast();
   const { user, isAuthenticated, isLoading } = useAuth();
+  const [location] = useLocation();
+
+  // Detect role from URL and set it for demo
+  useEffect(() => {
+    const pathToRole: { [key: string]: string } = {
+      '/admin': 'admin',
+      '/supervisor': 'supervisor', 
+      '/sales': 'sales',
+      '/superadmin': 'superadmin'
+    };
+    
+    if (pathToRole[location]) {
+      localStorage.setItem('demo-role', pathToRole[location]);
+    }
+  }, [location]);
 
   // Redirect to home if not authenticated
   useEffect(() => {
