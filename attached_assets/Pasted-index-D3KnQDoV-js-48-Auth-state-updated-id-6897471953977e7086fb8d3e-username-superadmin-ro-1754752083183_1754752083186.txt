@@ -1,0 +1,96 @@
+index-D3KnQDoV.js:48 Auth state updated: {id: '6897471953977e7086fb8d3e', username: 'superadmin', role: 'super_admin', name: 'Super Administrator', email: 'superadmin@bingomaster.com', …}
+index-D3KnQDoV.js:48 Attempting login with: {username: 'superadmin', password: '***'}
+index-D3KnQDoV.js:48 Login response: {user: {…}}
+index-D3KnQDoV.js:40 TypeError: Cannot read properties of undefined (reading 'toString')
+    at index-D3KnQDoV.js:379:33862
+    at Array.map (<anonymous>)
+    at R_ (index-D3KnQDoV.js:379:33827)
+    at Kd (index-D3KnQDoV.js:38:17383)
+    at af (index-D3KnQDoV.js:40:3158)
+    at Wg (index-D3KnQDoV.js:40:45415)
+    at $g (index-D3KnQDoV.js:40:40243)
+    at Wb (index-D3KnQDoV.js:40:40171)
+    at Mc (index-D3KnQDoV.js:40:40024)
+    at jf (index-D3KnQDoV.js:40:36319)
+sf @ index-D3KnQDoV.js:40
+o.callback @ index-D3KnQDoV.js:40
+Fp @ index-D3KnQDoV.js:38
+Og @ index-D3KnQDoV.js:40
+Ag @ index-D3KnQDoV.js:40
+zb @ index-D3KnQDoV.js:40
+Gb @ index-D3KnQDoV.js:40
+Ia @ index-D3KnQDoV.js:40
+Dg @ index-D3KnQDoV.js:40
+Ms @ index-D3KnQDoV.js:38
+(anonymous) @ index-D3KnQDoV.js:40
+setTimeout
+Uj @ index-D3KnQDoV.js:48
+d @ index-D3KnQDoV.js:48
+batch @ index-D3KnQDoV.js:48
+ds @ index-D3KnQDoV.js:48
+setData @ index-D3KnQDoV.js:48
+onSuccess @ index-D3KnQDoV.js:48
+x @ index-D3KnQDoV.js:48
+Promise.then
+C @ index-D3KnQDoV.js:48
+start @ index-D3KnQDoV.js:48
+fetch @ index-D3KnQDoV.js:48
+ol @ index-D3KnQDoV.js:48
+onSubscribe @ index-D3KnQDoV.js:48
+subscribe @ index-D3KnQDoV.js:48
+(anonymous) @ index-D3KnQDoV.js:48
+$p @ index-D3KnQDoV.js:38
+Ec @ index-D3KnQDoV.js:40
+Mi @ index-D3KnQDoV.js:40
+Gb @ index-D3KnQDoV.js:40
+Ia @ index-D3KnQDoV.js:40
+Dg @ index-D3KnQDoV.js:40
+Ms @ index-D3KnQDoV.js:38
+(anonymous) @ index-D3KnQDoV.js:40
+index-D3KnQDoV.js:379 Uncaught TypeError: Cannot read properties of undefined (reading 'toString')
+    at index-D3KnQDoV.js:379:33862
+    at Array.map (<anonymous>)
+    at R_ (index-D3KnQDoV.js:379:33827)
+    at Kd (index-D3KnQDoV.js:38:17383)
+    at af (index-D3KnQDoV.js:40:3158)
+    at Wg (index-D3KnQDoV.js:40:45415)
+    at $g (index-D3KnQDoV.js:40:40243)
+    at Wb (index-D3KnQDoV.js:40:40171)
+    at Mc (index-D3KnQDoV.js:40:40024)
+    at jf (index-D3KnQDoV.js:40:36319)
+(anonymous) @ index-D3KnQDoV.js:379
+R_ @ index-D3KnQDoV.js:379
+Kd @ index-D3KnQDoV.js:38
+af @ index-D3KnQDoV.js:40
+Wg @ index-D3KnQDoV.js:40
+$g @ index-D3KnQDoV.js:40
+Wb @ index-D3KnQDoV.js:40
+Mc @ index-D3KnQDoV.js:40
+jf @ index-D3KnQDoV.js:40
+Dg @ index-D3KnQDoV.js:40
+Ms @ index-D3KnQDoV.js:38
+(anonymous) @ index-D3KnQDoV.js:40
+setTimeout
+Uj @ index-D3KnQDoV.js:48
+d @ index-D3KnQDoV.js:48
+batch @ index-D3KnQDoV.js:48
+ds @ index-D3KnQDoV.js:48
+setData @ index-D3KnQDoV.js:48
+onSuccess @ index-D3KnQDoV.js:48
+x @ index-D3KnQDoV.js:48
+Promise.then
+C @ index-D3KnQDoV.js:48
+start @ index-D3KnQDoV.js:48
+fetch @ index-D3KnQDoV.js:48
+ol @ index-D3KnQDoV.js:48
+onSubscribe @ index-D3KnQDoV.js:48
+subscribe @ index-D3KnQDoV.js:48
+(anonymous) @ index-D3KnQDoV.js:48
+$p @ index-D3KnQDoV.js:38
+Ec @ index-D3KnQDoV.js:40
+Mi @ index-D3KnQDoV.js:40
+Gb @ index-D3KnQDoV.js:40
+Ia @ index-D3KnQDoV.js:40
+Dg @ index-D3KnQDoV.js:40
+Ms @ index-D3KnQDoV.js:38
+(anonymous) @ index-D3KnQDoV.js:40

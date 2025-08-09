@@ -135,8 +135,8 @@ export default function ModernSidebar() {
   const { user } = useAuth();
   
   const userRole = (user as any)?.role || 'sales';
-  const navigation = getNavigationByRole(userRole);
-  const bottomNavigation = getBottomNavigationByRole(userRole);
+  const navigation = getNavigationByRole(userRole) || [];
+  const bottomNavigation = getBottomNavigationByRole(userRole) || [];
 
   return (
     <div className="flex flex-col w-72 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white shadow-2xl">
@@ -198,42 +198,50 @@ export default function ModernSidebar() {
           <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3">
             Main Menu
           </h2>
-          {navigation.map((item) => (
-            <Link key={item.href} href={item.href}>
-              <div
-                className={cn(
-                  "group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200",
-                  location === item.href
-                    ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-600/25"
-                    : "text-slate-300 hover:text-white hover:bg-slate-700/50"
-                )}
-              >
-                <item.icon
+          {navigation && navigation.length > 0 ? navigation.map((item) => {
+            if (!item || !item.name || !item.href || !item.icon) return null;
+            
+            return (
+              <Link key={item.href} href={item.href}>
+                <div
                   className={cn(
-                    "mr-3 h-5 w-5 flex-shrink-0 transition-colors",
+                    "group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200",
                     location === item.href
-                      ? "text-white"
-                      : "text-slate-400 group-hover:text-slate-200"
+                      ? "bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg shadow-blue-600/25"
+                      : "text-slate-300 hover:text-white hover:bg-slate-700/50"
                   )}
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center justify-between">
-                    <span className="truncate">{item.name}</span>
-                    {item.badge && (
-                      <Badge 
-                        className="ml-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full"
-                      >
-                        {item.badge}
-                      </Badge>
+                >
+                  <item.icon
+                    className={cn(
+                      "mr-3 h-5 w-5 flex-shrink-0 transition-colors",
+                      location === item.href
+                        ? "text-white"
+                        : "text-slate-400 group-hover:text-slate-200"
                     )}
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <span className="truncate">{item.name || 'Navigation Item'}</span>
+                      {item.badge && (
+                        <Badge 
+                          className="ml-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full"
+                        >
+                          {item.badge}
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-slate-400 truncate mt-0.5 group-hover:text-slate-300">
+                      {item.description || ''}
+                    </p>
                   </div>
-                  <p className="text-xs text-slate-400 truncate mt-0.5 group-hover:text-slate-300">
-                    {item.description}
-                  </p>
                 </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          }) : (
+            <div className="text-xs text-slate-400 px-3 py-2">
+              No navigation items available
+            </div>
+          )}
         </div>
       </nav>
 
