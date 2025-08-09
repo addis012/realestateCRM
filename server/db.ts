@@ -10,7 +10,7 @@ if (!process.env.DATABASE_URL) {
 
 // For PostgreSQL with postgres.js
 const sql = postgres(process.env.DATABASE_URL, {
-  ssl: process.env.NODE_ENV === 'production' ? 'require' : false,
+  ssl: 'require', // Always require SSL for Replit environment
   max: 20,
   idle_timeout: 20,
   connect_timeout: 60,
