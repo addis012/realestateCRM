@@ -11,20 +11,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Login endpoints for different roles - professional access control
   app.get('/api/login/superadmin', (req, res) => {
-    // In production, this would redirect to role-specific auth flow
-    res.redirect('/api/auth/login?role=superadmin');
+    // Set role in session and redirect to dashboard
+    (req as any).session = (req as any).session || {};
+    (req as any).session.userRole = 'superadmin';
+    res.redirect('/superadmin');
   });
 
   app.get('/api/login/admin', (req, res) => {
-    res.redirect('/api/auth/login?role=admin');
+    (req as any).session = (req as any).session || {};
+    (req as any).session.userRole = 'admin';
+    res.redirect('/admin');
   });
 
   app.get('/api/login/supervisor', (req, res) => {
-    res.redirect('/api/auth/login?role=supervisor');  
+    (req as any).session = (req as any).session || {};
+    (req as any).session.userRole = 'supervisor';
+    res.redirect('/supervisor');
   });
 
   app.get('/api/login/sales', (req, res) => {
-    res.redirect('/api/auth/login?role=sales');
+    (req as any).session = (req as any).session || {};
+    (req as any).session.userRole = 'sales';
+    res.redirect('/sales');
   });
 
   // Auth routes - return user based on session/authentication
@@ -68,8 +76,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       };
       
-      // Return admin user for authenticated sessions
-      const user = mockUsers.admin;
+      // Get user role from session or default to admin
+      const sessionRole = (req as any).session?.userRole || 'admin';
+      const user = mockUsers[sessionRole as keyof typeof mockUsers] || mockUsers.admin;
       res.json(user);
     } catch (error) {
       console.error("Error fetching user:", error);
