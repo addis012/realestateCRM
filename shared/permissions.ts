@@ -1,5 +1,5 @@
-// Role-to-Permission Matrix for SaaS Real Estate CRM
-// This defines what each role can access and perform
+// Professional SaaS-Ready Role-to-Permission Matrix for Real Estate CRM
+// Based on industry-standard multi-tenant access control patterns
 
 export type UserRole = 'superadmin' | 'admin' | 'supervisor' | 'sales';
 
@@ -8,6 +8,81 @@ export interface Permission {
   action: string;
   scope?: 'all' | 'tenant' | 'team' | 'own' | 'assigned';
 }
+
+// Exact mapping from the professional role matrix provided
+export const ROLE_FEATURE_MATRIX = {
+  // Tenant Management
+  'tenant_management': {
+    'superadmin': { create: true, edit: true, delete: true, view: 'all' },
+    'admin': false,
+    'supervisor': false, 
+    'sales': false
+  },
+  
+  // Company Branding & Settings
+  'company_settings': {
+    'superadmin': false,
+    'admin': { control: 'full' },
+    'supervisor': false,
+    'sales': false
+  },
+  
+  // User Management (within company)
+  'user_management': {
+    'superadmin': false,
+    'admin': { create: true, edit: true, delete: true, scope: 'company' },
+    'supervisor': false,
+    'sales': false
+  },
+  
+  // Lead Management
+  'lead_management': {
+    'superadmin': { view: 'all_tenants' },
+    'admin': { control: 'full', scope: 'company' },
+    'supervisor': { control: 'team', assign: true },
+    'sales': { view: 'assigned_only', edit: 'assigned_only' }
+  },
+  
+  // Property Listings
+  'property_listings': {
+    'superadmin': { view: 'all_tenants' },
+    'admin': { control: 'full', scope: 'company' },
+    'supervisor': { view: 'team', match: true },
+    'sales': { view: 'all', match: 'assigned_leads_only' }
+  },
+  
+  // Deals & Commissions
+  'deals_commissions': {
+    'superadmin': { view: 'all_tenants' },
+    'admin': { control: 'full', scope: 'company' },
+    'supervisor': { control: 'team', approve: true },
+    'sales': { record: 'own', view: 'own_only' }
+  },
+  
+  // Reports & Dashboard  
+  'reports_dashboard': {
+    'superadmin': { scope: 'all_tenants', export: true },
+    'admin': { scope: 'company', export: true },
+    'supervisor': { scope: 'team', export: 'team' },
+    'sales': { scope: 'own_only', export: false }
+  },
+  
+  // Billing & Subscription
+  'billing_subscription': {
+    'superadmin': { manage: 'all_tenants' },
+    'admin': false,
+    'supervisor': false,
+    'sales': false
+  },
+  
+  // System Settings
+  'system_settings': {
+    'superadmin': { manage: 'global' },
+    'admin': false,
+    'supervisor': false,
+    'sales': false
+  }
+};
 
 // Permission definitions by role
 export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {

@@ -121,27 +121,31 @@ export function SuperAdminDashboard({ stats, activities, statsLoading }: Dashboa
         </Card>
       </div>
 
-      {/* SuperAdmin Actions */}
+      {/* SuperAdmin Platform Management Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
         <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
               <Shield className="h-5 w-5 text-red-600" />
-              <span>System Administration</span>
+              <span>Platform Administration</span>
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button className="w-full justify-start" variant="outline">
+            <Button className="w-full justify-start" variant="outline" data-testid="button-global-settings">
               <Settings className="h-4 w-4 mr-2" />
-              Global Settings
+              Global System Settings
             </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <Users className="h-4 w-4 mr-2" />
-              Tenant Management
+            <Button className="w-full justify-start" variant="outline" data-testid="button-tenant-management">
+              <Building className="h-4 w-4 mr-2" />
+              Create/Manage Tenants
             </Button>
-            <Button className="w-full justify-start" variant="outline">
+            <Button className="w-full justify-start" variant="outline" data-testid="button-billing-management">
+              <DollarSign className="h-4 w-4 mr-2" />
+              Subscription & Billing
+            </Button>
+            <Button className="w-full justify-start" variant="outline" data-testid="button-platform-analytics">
               <BarChart3 className="h-4 w-4 mr-2" />
-              System Analytics
+              Platform Analytics
             </Button>
           </CardContent>
         </Card>
@@ -251,6 +255,62 @@ export function AdminDashboard({ stats, activities, statsLoading }: DashboardPro
               <div className="w-16 h-16 bg-white/20 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                 <DollarSign className="h-8 w-8 text-white" />
               </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Admin Company Management Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Building className="h-5 w-5 text-blue-600" />
+              <span>Company Management</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Button className="w-full justify-start" variant="outline" data-testid="button-company-settings">
+              <Settings className="h-4 w-4 mr-2" />
+              Company Settings & Branding
+            </Button>
+            <Button className="w-full justify-start" variant="outline" data-testid="button-currency-settings">
+              <DollarSign className="h-4 w-4 mr-2" />
+              Currency & Exchange Rates
+            </Button>
+            <Button className="w-full justify-start" variant="outline" data-testid="button-user-management">
+              <UserCheck className="h-4 w-4 mr-2" />
+              Manage Users & Roles
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-2 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <BarChart3 className="h-5 w-5 text-emerald-600" />
+                <span>Company Reports & Analytics</span>
+              </div>
+              <Button variant="outline" size="sm" data-testid="button-export-reports">
+                Export Data
+              </Button>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <Button className="justify-start" variant="ghost" data-testid="button-lead-reports">
+                <Users className="h-4 w-4 mr-2" />
+                Lead Performance
+              </Button>
+              <Button className="justify-start" variant="ghost" data-testid="button-property-reports">
+                <Building className="h-4 w-4 mr-2" />
+                Property Analytics  
+              </Button>
+              <Button className="justify-start" variant="ghost" data-testid="button-commission-reports">
+                <DollarSign className="h-4 w-4 mr-2" />
+                Commission Reports
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -391,18 +451,43 @@ export function SupervisorDashboard({ stats, activities, statsLoading }: Dashboa
         </Card>
       </div>
 
-      {/* Team Performance Chart */}
-      <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm mb-8">
-        <CardHeader>
-          <CardTitle className="flex items-center space-x-2">
-            <Award className="h-5 w-5 text-emerald-600" />
-            <span>Team Performance Overview</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <SalesChart />
-        </CardContent>
-      </Card>
+      {/* Supervisor Team Management Actions */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Target className="h-5 w-5 text-blue-600" />
+              <span>Team Management</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Button className="w-full justify-start" variant="outline" data-testid="button-assign-leads">
+              <Users className="h-4 w-4 mr-2" />
+              Assign/Reassign Leads
+            </Button>
+            <Button className="w-full justify-start" variant="outline" data-testid="button-approve-deals">
+              <Handshake className="h-4 w-4 mr-2" />
+              Review & Approve Deals
+            </Button>
+            <Button className="w-full justify-start" variant="outline" data-testid="button-team-performance">
+              <Award className="h-4 w-4 mr-2" />
+              Team Performance Review
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card className="lg:col-span-2 shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Award className="h-5 w-5 text-emerald-600" />
+              <span>Team Performance Overview</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <SalesChart />
+          </CardContent>
+        </Card>
+      </div>
     </>
   );
 }
@@ -523,21 +608,17 @@ export function SalesDashboard({ stats, activities, statsLoading }: DashboardPro
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button className="w-full justify-start bg-blue-600 hover:bg-blue-700">
+            <Button className="w-full justify-start" variant="outline" data-testid="button-update-leads">
               <Users className="h-4 w-4 mr-2" />
-              Add New Lead
+              Update My Leads
             </Button>
-            <Button className="w-full justify-start" variant="outline">
+            <Button className="w-full justify-start" variant="outline" data-testid="button-record-activity">
+              <Clock className="h-4 w-4 mr-2" />
+              Record Activity
+            </Button>
+            <Button className="w-full justify-start" variant="outline" data-testid="button-close-deal">
               <Handshake className="h-4 w-4 mr-2" />
-              Update Deal Status
-            </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <Building className="h-4 w-4 mr-2" />
-              Schedule Property Visit
-            </Button>
-            <Button className="w-full justify-start" variant="outline">
-              <BarChart3 className="h-4 w-4 mr-2" />
-              View My Reports
+              Submit Deal for Approval
             </Button>
           </CardContent>
         </Card>

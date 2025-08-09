@@ -1,0 +1,149 @@
+Here’s a professional, SaaS-ready role definition for your Real Estate CRM:
+
+1. Superadmin (Platform Owner / SaaS Provider)
+Purpose: Oversees the entire SaaS platform and all tenant companies.
+Access Scope: All tenants, all data, all settings.
+
+Key Responsibilities:
+
+Create, suspend, or delete tenant accounts (real estate companies)
+
+Manage subscription plans, billing, and payments
+
+Configure global system settings (branding defaults, email templates, integrations)
+
+Monitor overall system health, usage analytics, and server performance
+
+Access and audit tenant data for compliance or support
+
+Set default permissions, features, and pricing for tenants
+
+Restrictions: None — full system control
+
+2. Admin (Tenant Owner / Company Admin)
+Purpose: Manages their own company’s CRM instance and business operations.
+Access Scope: All data and users within their own tenant/company only.
+
+Key Responsibilities:
+
+Configure company branding (logo, colors, custom domain/subdomain)
+
+Manage company-wide settings (currency, exchange rate, commission structure)
+
+Create, edit, and remove Supervisors and Sales Agents
+
+Full access to leads, property listings, deals, and reports
+
+Assign leads and properties to specific users
+
+Review sales performance and commissions across the team
+
+Generate and export detailed reports
+
+Restrictions: Cannot see or manage other tenant companies
+
+3. Supervisor (Team Manager)
+Purpose: Oversees sales agents, ensuring lead follow-up and sales performance.
+Access Scope: All leads and listings within their assigned team or department.
+
+Key Responsibilities:
+
+View and manage leads for all sales agents in their team
+
+Assign or reassign leads and listings among sales agents
+
+Track agent follow-ups and sales activity logs
+
+Approve or review deals before Admin confirmation (optional feature)
+
+Provide feedback, training, and performance reviews for sales agents
+
+Access reporting for their own team’s performance metrics
+
+Restrictions:
+
+Cannot create/delete other supervisors or admins
+
+Cannot change company-wide settings or billing info
+
+4. Sales Agent (Salesperson)
+Purpose: Works directly with assigned leads and property listings to close deals.
+Access Scope: Only their assigned leads, activities, and matched properties.
+
+Key Responsibilities:
+
+Contact, follow up, and update status of assigned leads
+
+View and present property listings to potential buyers
+
+Record meetings, calls, and customer interactions in activity logs
+
+Submit closed deal information for supervisor/admin approval
+
+Track their own commission and sales performance dashboard
+
+Restrictions:
+
+Cannot access unassigned leads or properties
+
+Cannot manage users or change system settings
+
+If you want, I can also prepare a role-to-permission matrix for your developers so that access control is clear in the backend APIs.
+That way, when we implement JWT role-based auth, it’s already mapped perfectly.
+
+Do you want me to make that permissions matrix?
+
+
+
+
+
+
+
+
+You said:
+yes
+
+
+ChatGPT said:
+Here’s a clear Role-to-Permission Matrix for your SaaS Real Estate CRM.
+This can be used directly in your JWT Role-Based Access Control (RBAC) logic for the backend.
+
+Role-to-Permission Matrix
+Feature / Action	Superadmin	Admin	Supervisor	Sales Agent
+Tenant Management	✅ Create/Edit/Delete tenants	❌	❌	❌
+View all tenants	✅	❌	❌	❌
+Company Branding & Settings	❌	✅ Full control	❌	❌
+Set currency & exchange rate	❌	✅	❌	❌
+User Management (within company)	❌	✅ Create/Edit/Delete Admin, Supervisor, Sales	❌	❌
+Create/Edit/Delete Supervisors	❌	✅	❌	❌
+Create/Edit/Delete Sales Agents	❌	✅	❌	❌
+Lead Management	✅ (view any)	✅ Full control	✅ (team only)	✅ (assigned only)
+Add/Edit/Delete leads	✅	✅	✅ (team only)	✅ (assigned only)
+Assign/Reassign leads	✅	✅	✅ (team only)	❌
+View all leads	✅	✅	✅ (team only)	❌ (only assigned)
+Property Listings	✅ (view all)	✅ Full control	✅ (team only)	✅ (view only)
+Add/Edit/Delete listings	✅	✅	❌ (view only)	❌
+Match property to lead	✅	✅	✅	✅ (assigned leads only)
+Deals & Commissions	✅ (view all)	✅ Full control	✅ (team only)	✅ (own only)
+Record closed deal	✅	✅	✅	✅ (own only)
+Approve deals	✅	✅	✅ (team only)	❌
+View commissions	✅ (all)	✅ (all)	✅ (team)	✅ (own only)
+Reports & Dashboard	✅ All tenants	✅ Company-wide	✅ Team only	✅ Own only
+Export data	✅	✅	✅ (team)	❌
+Billing & Subscription	✅ All tenants	❌	❌	❌
+System Settings (Global)	✅	❌	❌	❌
+
+✅ = Full access
+❌ = No access
+
+How to Implement
+Store role in JWT payload: { id: "userId", role: "admin", tenantId: "abc123" }
+
+Middleware checks:
+
+Role Permissions (from this matrix)
+
+Tenant ID Isolation (users can only touch their tenant’s data)
+
+Ownership Rules (Sales can only access assigned leads)
+
