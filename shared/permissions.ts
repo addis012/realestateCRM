@@ -35,33 +35,33 @@ export const ROLE_FEATURE_MATRIX = {
     'sales': false
   },
   
-  // Lead Management
+  // Lead Management - SuperAdmin excluded for privacy
   'lead_management': {
-    'superadmin': { view: 'all_tenants' },
+    'superadmin': false, // NO ACCESS to tenant business data
     'admin': { control: 'full', scope: 'company' },
     'supervisor': { control: 'team', assign: true },
     'sales': { view: 'assigned_only', edit: 'assigned_only' }
   },
   
-  // Property Listings
+  // Property Listings - SuperAdmin excluded for privacy
   'property_listings': {
-    'superadmin': { view: 'all_tenants' },
+    'superadmin': false, // NO ACCESS to tenant business data
     'admin': { control: 'full', scope: 'company' },
     'supervisor': { view: 'team', match: true },
     'sales': { view: 'all', match: 'assigned_leads_only' }
   },
   
-  // Deals & Commissions
+  // Deals & Commissions - SuperAdmin excluded for privacy
   'deals_commissions': {
-    'superadmin': { view: 'all_tenants' },
+    'superadmin': false, // NO ACCESS to tenant business data
     'admin': { control: 'full', scope: 'company' },
     'supervisor': { control: 'team', approve: true },
     'sales': { record: 'own', view: 'own_only' }
   },
   
-  // Reports & Dashboard  
+  // Reports & Dashboard - SuperAdmin gets platform metrics only
   'reports_dashboard': {
-    'superadmin': { scope: 'all_tenants', export: true },
+    'superadmin': { scope: 'platform_metrics_only', export: true }, // Aggregated data only
     'admin': { scope: 'company', export: true },
     'supervisor': { scope: 'team', export: 'team' },
     'sales': { scope: 'own_only', export: false }
@@ -97,12 +97,13 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
     { resource: 'system', action: 'configure', scope: 'all' },
     { resource: 'billing', action: 'manage', scope: 'all' },
     
-    // Data Access - All tenants
-    { resource: 'leads', action: 'read', scope: 'all' },
-    { resource: 'properties', action: 'read', scope: 'all' },
-    { resource: 'deals', action: 'read', scope: 'all' },
-    { resource: 'users', action: 'read', scope: 'all' },
-    { resource: 'reports', action: 'read', scope: 'all' },
+    // Platform Analytics - Aggregated data only, no individual tenant data
+    { resource: 'platform_analytics', action: 'read', scope: 'all' },
+    { resource: 'tenant_metrics', action: 'read', scope: 'all' },
+    { resource: 'platform_health', action: 'read', scope: 'all' },
+    
+    // NO ACCESS to individual tenant business data for privacy protection
+    // SuperAdmin manages the platform, not individual businesses
   ],
 
   admin: [

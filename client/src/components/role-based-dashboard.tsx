@@ -131,19 +131,39 @@ export function SuperAdminDashboard({ stats, activities, statsLoading }: Dashboa
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Button className="w-full justify-start" variant="outline" data-testid="button-global-settings">
+            <Button 
+              className="w-full justify-start" 
+              variant="outline" 
+              data-testid="button-global-settings"
+              onClick={() => window.alert('Global System Settings - Coming Soon')}
+            >
               <Settings className="h-4 w-4 mr-2" />
               Global System Settings
             </Button>
-            <Button className="w-full justify-start" variant="outline" data-testid="button-tenant-management">
+            <Button 
+              className="w-full justify-start" 
+              variant="outline" 
+              data-testid="button-tenant-management"
+              onClick={() => window.alert('Tenant Management - Coming Soon')}
+            >
               <Building className="h-4 w-4 mr-2" />
               Create/Manage Tenants
             </Button>
-            <Button className="w-full justify-start" variant="outline" data-testid="button-billing-management">
+            <Button 
+              className="w-full justify-start" 
+              variant="outline" 
+              data-testid="button-billing-management"
+              onClick={() => window.alert('Billing Management - Coming Soon')}
+            >
               <DollarSign className="h-4 w-4 mr-2" />
               Subscription & Billing
             </Button>
-            <Button className="w-full justify-start" variant="outline" data-testid="button-platform-analytics">
+            <Button 
+              className="w-full justify-start" 
+              variant="outline" 
+              data-testid="button-platform-analytics"
+              onClick={() => window.alert('Platform Analytics - Coming Soon')}
+            >
               <BarChart3 className="h-4 w-4 mr-2" />
               Platform Analytics
             </Button>

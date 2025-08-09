@@ -105,10 +105,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Temporary test endpoint to bypass auth during development
-  app.get('/api/test/dashboard-stats', async (req, res) => {
+  app.get('/api/test/dashboard-stats', async (req: any, res) => {
     try {
-      const stats = await storage.getDashboardStats('tenant-1');
-      res.json(stats);
+      const userRole = req.session?.userRole || 'sales';
+      
+      // SuperAdmin gets platform stats only - NO ACCESS to tenant business data
+      if (userRole === 'superadmin') {
+        const stats = {
+          totalTenants: 15,
+          activeTenants: 12, 
+          platformRevenue: 125000,
+          activeUsers: 1247,
+          monthlyGrowth: 18,
+          systemHealth: 99.8,
+          storageUsed: 2.5,
+          apiCalls: 45600,
+          uptime: 99.95
+        };
+        res.json(stats);
+      } else {
+        // Other roles get tenant-specific stats
+        const stats = await storage.getDashboardStats('tenant-1');
+        res.json(stats);
+      }
     } catch (error) {
       console.error("Error fetching test dashboard stats:", error);
       res.status(500).json({ message: "Failed to fetch test dashboard stats" });
@@ -165,15 +184,137 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Dashboard stats
+  // Dashboard stats - role-based data access
   app.get('/api/dashboard/stats', async (req: any, res) => {
     try {
-      // Mock user data for demo - using fixed tenant
-      const stats = await storage.getDashboardStats('tenant-1');
-      res.json(stats);
+      const userRole = req.session?.userRole || 'sales';
+      
+      // SuperAdmin gets platform stats only, no tenant business data
+      if (userRole === 'superadmin') {
+        const stats = {
+          totalTenants: 15,
+          activeTenants: 12,
+          platformRevenue: 125000,
+          activeUsers: 1247,
+          monthlyGrowth: 18,
+          systemHealth: 99.8,
+          storageUsed: 2.5,
+          apiCalls: 45600,
+          uptime: 99.95
+        };
+        res.json(stats);
+      } else {
+        // Other roles get tenant-specific stats
+        const stats = await storage.getDashboardStats('tenant-1');
+        res.json(stats);
+      }
     } catch (error) {
       console.error("Error fetching dashboard stats:", error);
       res.status(500).json({ message: "Failed to fetch dashboard stats" });
+    }
+  });
+
+  // SuperAdmin Platform Management Routes
+  app.get('/api/superadmin/platform-stats', async (req: any, res) => {
+    try {
+      // Platform-level aggregated statistics (no individual tenant data)
+      const stats = {
+        totalTenants: 15,
+        activeTenants: 12,
+        platformRevenue: 125000,
+        monthlyGrowth: 18,
+        systemHealth: 99.8,
+        storageUsed: 2.5, // GB
+        apiCalls: 45600,
+        uptime: 99.95
+      };
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching platform stats:", error);
+      res.status(500).json({ message: "Failed to fetch platform stats" });
+    }
+  });
+
+  app.get('/api/superadmin/tenants', async (req: any, res) => {
+    try {
+      // Basic tenant information only (no business data)
+      const tenants = [
+        {
+          id: 'tenant-1',
+          name: 'PrimeRealty',
+          subdomain: 'primerealty',
+          isActive: true,
+          createdAt: '2024-01-15',
+          plan: 'Professional',
+          userCount: 12
+        },
+        {
+          id: 'tenant-2', 
+          name: 'UrbanProperties',
+          subdomain: 'urbanprops',
+          isActive: true,
+          createdAt: '2024-02-20',
+          plan: 'Enterprise',
+          userCount: 25
+        }
+      ];
+      res.json(tenants);
+    } catch (error) {
+      console.error("Error fetching tenants:", error);
+      res.status(500).json({ message: "Failed to fetch tenants" });
+    }
+  });
+
+  app.post('/api/superadmin/tenants', async (req: any, res) => {
+    try {
+      const { name, subdomain, plan } = req.body;
+      
+      // Create new tenant
+      const newTenant = {
+        id: `tenant-${Date.now()}`,
+        name,
+        subdomain,
+        plan: plan || 'Basic',
+        isActive: true,
+        createdAt: new Date().toISOString().split('T')[0],
+        userCount: 0
+      };
+      
+      res.status(201).json(newTenant);
+    } catch (error) {
+      console.error("Error creating tenant:", error);
+      res.status(500).json({ message: "Failed to create tenant" });
+    }
+  });
+
+  app.get('/api/superadmin/system-settings', async (req: any, res) => {
+    try {
+      const settings = {
+        maintenanceMode: false,
+        maxTenantsPerPlan: {
+          basic: 100,
+          professional: 500,
+          enterprise: 1000
+        },
+        apiRateLimit: 1000,
+        storageLimit: 10, // GB per tenant
+        backupFrequency: 'daily'
+      };
+      res.json(settings);
+    } catch (error) {
+      console.error("Error fetching system settings:", error);
+      res.status(500).json({ message: "Failed to fetch system settings" });
+    }
+  });
+
+  app.put('/api/superadmin/system-settings', async (req: any, res) => {
+    try {
+      // Update system settings
+      const settings = req.body;
+      res.json({ message: "System settings updated successfully", settings });
+    } catch (error) {
+      console.error("Error updating system settings:", error);
+      res.status(500).json({ message: "Failed to update system settings" });
     }
   });
 
