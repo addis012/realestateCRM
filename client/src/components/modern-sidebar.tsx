@@ -16,69 +16,127 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 
-const navigation = [
-  {
-    name: "Dashboard",
-    href: "/",
-    icon: Home,
-    badge: null,
-    description: "Overview and analytics"
-  },
-  {
-    name: "Leads",
-    href: "/leads",
-    icon: Users,
-    badge: "24",
-    description: "Manage potential clients"
-  },
-  {
-    name: "Properties",
-    href: "/properties",
-    icon: Building,
-    badge: "8",
-    description: "Property listings"
-  },
-  {
-    name: "Deals",
-    href: "/deals",
-    icon: Handshake,
-    badge: null,
-    description: "Active transactions"
-  },
-  {
-    name: "Team",
-    href: "/team",
-    icon: UserCheck,
-    badge: null,
-    description: "Team management"
-  },
-  {
-    name: "Exchange Rates",
-    href: "/exchange-rates",
-    icon: DollarSign,
-    badge: null,
-    description: "Currency management"
+const getNavigationByRole = (role: string) => {
+  const allNavigation = [
+    {
+      name: "Dashboard",
+      href: "/",
+      icon: Home,
+      badge: null,
+      description: "Overview and analytics",
+      roles: ["superadmin", "admin", "supervisor", "sales"]
+    },
+    {
+      name: "Platform Tenants",
+      href: "/team",
+      icon: Building,
+      badge: null,
+      description: "Manage tenant organizations",
+      roles: ["superadmin"]
+    },
+    {
+      name: "System Analytics",
+      href: "/system-analytics",
+      icon: DollarSign,
+      badge: null,
+      description: "Platform performance metrics",
+      roles: ["superadmin"]
+    },
+    {
+      name: "Leads",
+      href: "/leads",
+      icon: Users,
+      badge: "24",
+      description: "Manage potential clients",
+      roles: ["admin", "supervisor", "sales"]
+    },
+    {
+      name: "Properties",
+      href: "/properties",
+      icon: Building,
+      badge: "8",
+      description: "Property listings",
+      roles: ["admin", "supervisor", "sales"]
+    },
+    {
+      name: "Deals",
+      href: "/deals",
+      icon: Handshake,
+      badge: null,
+      description: "Active transactions",
+      roles: ["admin", "supervisor", "sales"]
+    },
+    {
+      name: "Team",
+      href: "/team",
+      icon: UserCheck,
+      badge: null,
+      description: "Team management",
+      roles: ["admin", "supervisor"]
+    },
+    {
+      name: "My Performance",
+      href: "/performance",
+      icon: UserCheck,
+      badge: null,
+      description: "Personal metrics",
+      roles: ["sales"]
+    },
+    {
+      name: "Exchange Rates",
+      href: "/exchange-rates",
+      icon: DollarSign,
+      badge: null,
+      description: "Currency management",
+      roles: ["admin"]
+    }
+  ];
+
+  return allNavigation.filter(item => item.roles.includes(role));
+};
+
+const getBottomNavigationByRole = (role: string) => {
+  const allBottomNavigation = [
+    {
+      name: "Platform Settings",
+      href: "/platform-settings",
+      icon: Settings,
+      description: "System configuration",
+      roles: ["superadmin"]
+    },
+    {
+      name: "Company Settings",
+      href: "/settings",
+      icon: Settings,
+      description: "Account settings",
+      roles: ["admin", "supervisor"]
+    },
+    {
+      name: "My Settings",
+      href: "/my-settings",
+      icon: Settings,
+      description: "Personal preferences",
+      roles: ["sales"]
+    },
+    {
+      name: "Help & Support",
+      href: "/help",
+      icon: HelpCircle,
+      description: "Get assistance",
+      roles: ["superadmin", "admin", "supervisor", "sales"]
   }
 ];
 
-const bottomNavigation = [
-  {
-    name: "Settings",
-    href: "/settings",
-    icon: Settings,
-    description: "Account settings"
-  },
-  {
-    name: "Help & Support",
-    href: "/help",
-    icon: HelpCircle,
-    description: "Get assistance"
-  }
-];
+  return allBottomNavigation.filter(item => item.roles.includes(role));
+};
 
 export default function ModernSidebar() {
   const [location] = useLocation();
   const { user } = useAuth();
+  
+  const userRole = (user as any)?.role || 'sales';
+  const navigation = getNavigationByRole(userRole);
+  const bottomNavigation = getBottomNavigationByRole(userRole);
 
   return (
     <div className="flex flex-col w-72 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 text-white shadow-2xl">
@@ -90,7 +148,7 @@ export default function ModernSidebar() {
           </div>
           <div>
             <h1 className="text-xl font-bold">RealEstate CRM</h1>
-            <p className="text-xs text-slate-400">Professional Edition</p>
+            <p className="text-xs text-slate-400 capitalize">{userRole} Dashboard</p>
           </div>
         </div>
         <Button variant="ghost" size="sm" className="text-white hover:bg-slate-700">
