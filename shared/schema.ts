@@ -263,24 +263,72 @@ export const insertLeadSchema = createInsertSchema(leads).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  budget: z.union([
+    z.string().optional(),
+    z.number().transform(n => n.toString()).optional()
+  ]).optional(),
 });
 
 export const insertPropertySchema = createInsertSchema(properties).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  price: z.union([
+    z.string(),
+    z.number().transform(n => n.toString())
+  ]),
+  bedrooms: z.union([
+    z.number().optional(),
+    z.string().transform(s => parseInt(s)).optional()
+  ]).optional(),
+  bathrooms: z.union([
+    z.number().optional(),
+    z.string().transform(s => parseInt(s)).optional()
+  ]).optional(),
+  squareFeet: z.union([
+    z.number().optional(),
+    z.string().transform(s => parseInt(s)).optional()
+  ]).optional(),
 });
 
 export const insertDealSchema = createInsertSchema(deals).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  salePrice: z.union([
+    z.string(),
+    z.number().transform(n => n.toString())
+  ]),
+  commissionPercentage: z.union([
+    z.string(),
+    z.number().transform(n => n.toString())
+  ]),
+  agentCommission: z.union([
+    z.string(),
+    z.number().transform(n => n.toString())
+  ]),
+  companyCommission: z.union([
+    z.string(),
+    z.number().transform(n => n.toString())
+  ]),
 });
 
 export const insertExchangeRateSchema = createInsertSchema(exchangeRates).omit({
   id: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  buyRate: z.union([
+    z.string(),
+    z.number().transform(n => n.toString())
+  ]),
+  sellRate: z.union([
+    z.string(),
+    z.number().transform(n => n.toString())
+  ]),
 });
 
 export const insertActivitySchema = createInsertSchema(activities).omit({
