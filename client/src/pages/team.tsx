@@ -23,13 +23,13 @@ export default function TeamPage() {
     enabled: isAuthenticated,
   });
 
-  const { data: tenants } = useQuery({
+  const { data: tenants, isLoading: tenantsLoading } = useQuery({
     queryKey: ["/api/superadmin/tenants"],
-    enabled: isAuthenticated && user?.role === 'superadmin',
+    enabled: isAuthenticated && (user as any)?.role === 'superadmin',
   });
 
   const getRoleColor = (role: string) => {
-    const colors = {
+    const colors: Record<string, string> = {
       superadmin: "bg-red-100 text-red-800",
       admin: "bg-blue-100 text-blue-800",
       supervisor: "bg-emerald-100 text-emerald-800",
@@ -39,7 +39,7 @@ export default function TeamPage() {
   };
 
   const getRoleIcon = (role: string) => {
-    const icons = {
+    const icons: Record<string, any> = {
       superadmin: Shield,
       admin: Users,
       supervisor: Target,
@@ -50,9 +50,10 @@ export default function TeamPage() {
   };
 
   const getCreateButton = () => {
-    if (user?.role === 'superadmin') {
+    const userRole = (user as any)?.role;
+    if (userRole === 'superadmin') {
       return <AddTenantModal />;
-    } else if (user?.role === 'admin') {
+    } else if (userRole === 'admin') {
       return (
         <AddUserModal 
           allowedRoles={[{ value: "supervisor", label: "Supervisor" }]}
@@ -60,7 +61,7 @@ export default function TeamPage() {
           title="Create New Supervisor"
         />
       );
-    } else if (user?.role === 'supervisor') {
+    } else if (userRole === 'supervisor') {
       return (
         <AddUserModal 
           allowedRoles={[{ value: "sales", label: "Sales Agent" }]}
@@ -86,11 +87,11 @@ export default function TeamPage() {
         <div>
           <h1 className="text-3xl font-bold">Team Management</h1>
           <p className="text-gray-600 mt-2">
-            {user?.role === 'superadmin' 
+            {(user as any)?.role === 'superadmin' 
               ? 'Manage tenants and platform access'
-              : user?.role === 'admin'
+              : (user as any)?.role === 'admin'
               ? 'Manage supervisors and company settings'
-              : user?.role === 'supervisor'
+              : (user as any)?.role === 'supervisor'
               ? 'Manage your sales team'
               : 'View team information'
             }
@@ -100,7 +101,7 @@ export default function TeamPage() {
       </div>
 
       {/* SuperAdmin Tenant View */}
-      {user?.role === 'superadmin' && (
+      {(user as any)?.role === 'superadmin' && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
@@ -109,35 +110,54 @@ export default function TeamPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {tenants?.map((tenant: any) => (
-                <Card key={tenant.id} className="p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-semibold">{tenant.name}</h3>
-                    <Badge variant={tenant.isActive ? "default" : "secondary"}>
-                      {tenant.isActive ? "Active" : "Inactive"}
-                    </Badge>
+            {tenantsLoading ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="animate-pulse">
+                    <div className="h-20 bg-gray-300 rounded-lg"></div>
                   </div>
-                  <p className="text-sm text-gray-600 mb-2">
-                    {tenant.subdomain}.realestate.com
-                  </p>
-                  <div className="flex items-center justify-between text-xs text-gray-500">
-                    <span>{tenant.plan} Plan</span>
-                    <span>{tenant.userCount} users</span>
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {tenants && Array.isArray(tenants) && tenants.length > 0 ? (
+                  tenants.map((tenant: any) => (
+                    <Card key={tenant.id} className="p-4 hover:shadow-md transition-shadow">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-semibold text-lg">{tenant.name}</h3>
+                        <Badge variant={tenant.isActive ? "default" : "secondary"}>
+                          {tenant.isActive ? "Active" : "Inactive"}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-2">
+                        {tenant.subdomain}.realestate.com
+                      </p>
+                      <div className="flex items-center justify-between text-xs text-gray-500">
+                        <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                          {tenant.plan} Plan
+                        </span>
+                        <span>{tenant.userCount} users</span>
+                      </div>
+                      <div className="mt-2 text-xs text-gray-400">
+                        Created: {new Date(tenant.createdAt).toLocaleDateString()}
+                      </div>
+                    </Card>
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-8 text-gray-500">
+                    <Users className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                    <p>No tenants created yet</p>
+                    <p className="text-sm mt-1">Use the "Create New Tenant" button above to get started</p>
                   </div>
-                </Card>
-              )) || (
-                <div className="col-span-full text-center py-8 text-gray-500">
-                  No tenants available
-                </div>
-              )}
-            </div>
+                )}
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
 
       {/* Team Members View */}
-      {user?.role !== 'superadmin' && (
+      {(user as any)?.role !== 'superadmin' && (
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
@@ -160,7 +180,7 @@ export default function TeamPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                {users?.map((member: any) => (
+                {users && Array.isArray(users) ? users.map((member: any) => (
                   <div key={member.id} className="flex items-center justify-between p-4 rounded-lg border bg-white">
                     <div className="flex items-center space-x-4">
                       <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold">
@@ -185,9 +205,10 @@ export default function TeamPage() {
                       </div>
                     </div>
                   </div>
-                )) || (
+                )) : (
                   <div className="text-center py-8 text-gray-500">
-                    No team members found
+                    <Users className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                    <p>No team members found</p>
                   </div>
                 )}
               </div>
