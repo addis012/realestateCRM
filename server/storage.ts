@@ -322,13 +322,18 @@ import { MongoStorage } from './mongoStorage';
 // Try MongoDB first, fallback to PostgreSQL if it fails
 async function createStorage(): Promise<IStorage> {
   try {
+    console.log('Attempting MongoDB connection...');
+    console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
+    console.log('MONGODB_URI format valid:', process.env.MONGODB_URI?.startsWith('mongodb'));
+    
     const mongoStorage = new MongoStorage();
     // Test MongoDB connection
     await mongoStorage.getDashboardStats('test-connection');
-    console.log('Using MongoDB storage');
+    console.log('✓ Using MongoDB storage successfully');
     return mongoStorage;
   } catch (error) {
     console.warn('MongoDB connection failed, falling back to PostgreSQL:', error instanceof Error ? error.message : 'Unknown error');
+    console.log('✓ Using PostgreSQL storage as fallback');
     return new DatabaseStorage();
   }
 }
