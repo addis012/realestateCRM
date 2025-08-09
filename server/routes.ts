@@ -10,28 +10,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // await setupAuth(app);
 
   // Login endpoints for different roles - professional access control
-  app.get('/api/login/superadmin', (req, res) => {
-    // Set role in session and redirect to dashboard
-    (req as any).session = (req as any).session || {};
-    (req as any).session.userRole = 'superadmin';
+  app.get('/api/login/superadmin', (req: any, res) => {
+    req.session.userRole = 'superadmin';
+    req.session.userId = '1';
     res.redirect('/superadmin');
   });
 
-  app.get('/api/login/admin', (req, res) => {
-    (req as any).session = (req as any).session || {};
-    (req as any).session.userRole = 'admin';
+  app.get('/api/login/admin', (req: any, res) => {
+    req.session.userRole = 'admin';
+    req.session.userId = '2';
     res.redirect('/admin');
   });
 
-  app.get('/api/login/supervisor', (req, res) => {
-    (req as any).session = (req as any).session || {};
-    (req as any).session.userRole = 'supervisor';
+  app.get('/api/login/supervisor', (req: any, res) => {
+    req.session.userRole = 'supervisor';
+    req.session.userId = '3';
     res.redirect('/supervisor');
   });
 
-  app.get('/api/login/sales', (req, res) => {
-    (req as any).session = (req as any).session || {};
-    (req as any).session.userRole = 'sales';
+  app.get('/api/login/sales', (req: any, res) => {
+    req.session.userRole = 'sales';
+    req.session.userId = '4';
     res.redirect('/sales');
   });
 
@@ -93,6 +92,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Get user role from session or default to admin
       const sessionRole = (req as any).session?.userRole || 'admin';
+      const sessionUserId = (req as any).session?.userId || '2';
+      
+      console.log('Session data:', { userRole: sessionRole, userId: sessionUserId });
+      
       const user = mockUsers[sessionRole as keyof typeof mockUsers] || mockUsers.admin;
       res.json(user);
     } catch (error) {
