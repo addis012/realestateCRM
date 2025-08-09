@@ -23,7 +23,16 @@ export default function Dashboard() {
   const { user, isAuthenticated, isLoading } = useAuth();
   const [location] = useLocation();
 
+  // Determine role from URL or user data
+  const getCurrentRole = () => {
+    if (location.includes('/superadmin')) return 'superadmin';
+    if (location.includes('/admin')) return 'admin';
+    if (location.includes('/supervisor')) return 'supervisor';
+    if (location.includes('/sales')) return 'sales';
+    return (user as any)?.role || 'admin'; // fallback to user's role
+  };
 
+  const currentRole = getCurrentRole();
 
   // Redirect to home if not authenticated
   useEffect(() => {
@@ -58,25 +67,25 @@ export default function Dashboard() {
     <div className="flex h-screen bg-slate-50">
       <ModernSidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Header title="Dashboard" subtitle={`Welcome back, ${(user as any)?.firstName || 'User'}! Here's what's happening with your business today.`} />
+        <Header title={`${currentRole.charAt(0).toUpperCase() + currentRole.slice(1)} Dashboard`} subtitle={`Welcome back, ${(user as any)?.firstName || 'User'}! Here's your ${currentRole} view of the business.`} />
         
 
         
         <main className="flex-1 overflow-y-auto p-6 bg-gradient-to-br from-slate-50 to-slate-100/50">
           {/* Role-Based Dashboard Content */}
-          {(user as any)?.role === 'superadmin' && (
+          {currentRole === 'superadmin' && (
             <SuperAdminDashboard stats={stats} activities={activities || []} statsLoading={statsLoading} />
           )}
           
-          {(user as any)?.role === 'admin' && (
+          {currentRole === 'admin' && (
             <AdminDashboard stats={stats} activities={activities || []} statsLoading={statsLoading} />
           )}
           
-          {(user as any)?.role === 'supervisor' && (
+          {currentRole === 'supervisor' && (
             <SupervisorDashboard stats={stats} activities={activities || []} statsLoading={statsLoading} />
           )}
           
-          {(user as any)?.role === 'sales' && (
+          {currentRole === 'sales' && (
             <SalesDashboard stats={stats} activities={activities || []} statsLoading={statsLoading} />
           )}
 
