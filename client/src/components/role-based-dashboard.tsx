@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import SalesChart from "@/components/charts/sales-chart";
 import LeadSourceChart from "@/components/charts/lead-source-chart";
+import { AddTenantModal } from "./modals/add-tenant-modal";
+import { AddUserModal } from "./modals/add-user-modal";
 
 interface DashboardProps {
   stats: any;
@@ -140,15 +142,7 @@ export function SuperAdminDashboard({ stats, activities, statsLoading }: Dashboa
               <Settings className="h-4 w-4 mr-2" />
               Global System Settings
             </Button>
-            <Button 
-              className="w-full justify-start" 
-              variant="outline" 
-              data-testid="button-tenant-management"
-              onClick={() => window.alert('Tenant Management - Coming Soon')}
-            >
-              <Building className="h-4 w-4 mr-2" />
-              Create/Manage Tenants
-            </Button>
+            <AddTenantModal />
             <Button 
               className="w-full justify-start" 
               variant="outline" 
@@ -298,10 +292,11 @@ export function AdminDashboard({ stats, activities, statsLoading }: DashboardPro
               <DollarSign className="h-4 w-4 mr-2" />
               Currency & Exchange Rates
             </Button>
-            <Button className="w-full justify-start" variant="outline" data-testid="button-user-management">
-              <UserCheck className="h-4 w-4 mr-2" />
-              Manage Users & Roles
-            </Button>
+            <AddUserModal 
+              allowedRoles={[{ value: "supervisor", label: "Supervisor" }]}
+              triggerText="Add Supervisor"
+              title="Create New Supervisor"
+            />
           </CardContent>
         </Card>
 
@@ -489,10 +484,11 @@ export function SupervisorDashboard({ stats, activities, statsLoading }: Dashboa
               <Handshake className="h-4 w-4 mr-2" />
               Review & Approve Deals
             </Button>
-            <Button className="w-full justify-start" variant="outline" data-testid="button-team-performance">
-              <Award className="h-4 w-4 mr-2" />
-              Team Performance Review
-            </Button>
+            <AddUserModal 
+              allowedRoles={[{ value: "sales", label: "Sales Agent" }]}
+              triggerText="Add Sales Agent"
+              title="Create New Sales Agent"
+            />
           </CardContent>
         </Card>
 

@@ -1,229 +1,200 @@
-import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/hooks/useAuth";
-import ModernSidebar from "@/components/modern-sidebar";
-import Header from "@/components/header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Edit, Ban, UserPlus, Users } from "lucide-react";
-import InviteUserModal from "@/components/modals/invite-user-modal";
+import { 
+  Users, 
+  UserPlus, 
+  Mail, 
+  Calendar,
+  Shield,
+  Target,
+  Award
+} from "lucide-react";
+import { AddUserModal } from "@/components/modals/add-user-modal";
+import { AddTenantModal } from "@/components/modals/add-tenant-modal";
 
-export default function Team() {
-  const [showInviteModal, setShowInviteModal] = useState(false);
-  const { toast } = useToast();
-  const { isAuthenticated, isLoading } = useAuth();
+export default function TeamPage() {
+  const { user, isAuthenticated } = useAuth();
+  
+  const { data: users, isLoading } = useQuery({
+    queryKey: ["/api/users"],
+    enabled: isAuthenticated,
+  });
 
-  // Redirect to home if not authenticated
-  useEffect(() => {
-    if (!isLoading && !isAuthenticated) {
-      toast({
-        title: "Unauthorized",
-        description: "You are logged out. Logging in again...",
-        variant: "destructive",
-      });
-      setTimeout(() => {
-        window.location.href = "/api/login";
-      }, 500);
-      return;
-    }
-  }, [isAuthenticated, isLoading, toast]);
+  const { data: tenants } = useQuery({
+    queryKey: ["/api/superadmin/tenants"],
+    enabled: isAuthenticated && user?.role === 'superadmin',
+  });
 
   const getRoleColor = (role: string) => {
-    switch (role) {
-      case "superadmin":
-        return "bg-purple-100 text-purple-800";
-      case "admin":
-        return "bg-red-100 text-red-800";
-      case "supervisor":
-        return "bg-blue-100 text-blue-800";
-      case "sales":
-        return "bg-green-100 text-green-800";
-      default:
-        return "bg-gray-100 text-gray-800";
+    const colors = {
+      superadmin: "bg-red-100 text-red-800",
+      admin: "bg-blue-100 text-blue-800",
+      supervisor: "bg-emerald-100 text-emerald-800",
+      sales: "bg-purple-100 text-purple-800"
+    };
+    return colors[role] || "bg-gray-100 text-gray-800";
+  };
+
+  const getRoleIcon = (role: string) => {
+    const icons = {
+      superadmin: Shield,
+      admin: Users,
+      supervisor: Target,
+      sales: Award
+    };
+    const Icon = icons[role] || Users;
+    return <Icon className="h-4 w-4" />;
+  };
+
+  const getCreateButton = () => {
+    if (user?.role === 'superadmin') {
+      return <AddTenantModal />;
+    } else if (user?.role === 'admin') {
+      return (
+        <AddUserModal 
+          allowedRoles={[{ value: "supervisor", label: "Supervisor" }]}
+          triggerText="Add Supervisor"
+          title="Create New Supervisor"
+        />
+      );
+    } else if (user?.role === 'supervisor') {
+      return (
+        <AddUserModal 
+          allowedRoles={[{ value: "sales", label: "Sales Agent" }]}
+          triggerText="Add Sales Agent"
+          title="Create New Sales Agent"
+        />
+      );
     }
+    return null;
   };
 
-  const getStatusIndicator = (isActive: boolean) => {
-    return isActive ? "bg-green-400" : "bg-red-400";
-  };
-
-  if (isLoading || !isAuthenticated) {
-    return <div>Loading...</div>;
+  if (!isAuthenticated) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-gray-500">Please log in to view the team.</p>
+      </div>
+    );
   }
 
-  // Mock team data for display - in real app this would come from API
-  const teamMembers = [
-    {
-      id: "1",
-      firstName: "Michael",
-      lastName: "Chen",
-      email: "michael.chen@primerealty.com",
-      role: "sales",
-      isActive: true,
-      profileImageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40",
-      performance: { deals: 8, target: 10 },
-      commission: 24680,
-      lastActive: "2 hours ago"
-    },
-    {
-      id: "2",
-      firstName: "Sarah",
-      lastName: "Johnson",
-      email: "sarah.johnson@primerealty.com",
-      role: "supervisor",
-      isActive: true,
-      profileImageUrl: "https://images.unsplash.com/photo-1494790108755-2616b612b494?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40",
-      performance: { team: 5, achievement: 92 },
-      commission: 18240,
-      lastActive: "1 hour ago"
-    },
-    {
-      id: "3",
-      firstName: "David",
-      lastName: "Wilson",
-      email: "david.wilson@primerealty.com",
-      role: "sales",
-      isActive: true,
-      profileImageUrl: "https://images.unsplash.com/photo-1560250097-0b93528c311a?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40",
-      performance: { deals: 5, target: 10 },
-      commission: 15750,
-      lastActive: "5 hours ago"
-    }
-  ];
-
   return (
-    <div className="flex h-screen bg-slate-50">
-      <ModernSidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header 
-          title="Team Management" 
-          subtitle="Manage team members and their performance."
-          onAddNew={() => setShowInviteModal(true)}
-        />
-        
-        <main className="flex-1 overflow-y-auto p-6">
-          <Card>
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>Team Management</CardTitle>
-                <Button onClick={() => setShowInviteModal(true)}>
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Invite User
-                </Button>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {teamMembers && teamMembers.length > 0 ? (
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>User</TableHead>
-                        <TableHead>Role</TableHead>
-                        <TableHead>Performance</TableHead>
-                        <TableHead>Commission</TableHead>
-                        <TableHead>Last Active</TableHead>
-                        <TableHead>Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {teamMembers.map((member) => (
-                        <TableRow key={member.id}>
-                          <TableCell>
-                            <div className="flex items-center space-x-3">
-                              <img 
-                                src={member.profileImageUrl} 
-                                alt="Team Member" 
-                                className="w-10 h-10 rounded-full object-cover"
-                              />
-                              <div>
-                                <div className="text-sm font-medium text-gray-900">
-                                  {member.firstName} {member.lastName}
-                                </div>
-                                <div className="text-sm text-gray-500">{member.email}</div>
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge className={getRoleColor(member.role)}>
-                              {member.role === "sales" ? "Sales Agent" : 
-                               member.role === "supervisor" ? "Supervisor" :
-                               member.role === "admin" ? "Admin" : "Superadmin"}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            {member.role === "sales" ? (
-                              <div>
-                                <div className="text-sm text-gray-900">
-                                  {member.performance.deals} deals closed
-                                </div>
-                                <div className="text-sm text-gray-500">
-                                  Target: {member.performance.target}/month
-                                </div>
-                              </div>
-                            ) : member.role === "supervisor" ? (
-                              <div>
-                                <div className="text-sm text-gray-900">
-                                  Team of {member.performance.team} agents
-                                </div>
-                                <div className="text-sm text-gray-500">
-                                  {member.performance.achievement}% target achievement
-                                </div>
-                              </div>
-                            ) : (
-                              <div className="text-sm text-gray-500">Management role</div>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            <div className="text-sm font-semibold text-success">
-                              ${member.commission.toLocaleString()}
-                            </div>
-                            <div className="text-sm text-gray-500">This month</div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center">
-                              <div className={`w-2 h-2 ${getStatusIndicator(member.isActive)} rounded-full mr-2`}></div>
-                              <span className="text-sm text-gray-900">{member.lastActive}</span>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center space-x-2">
-                              <Button variant="ghost" size="sm">
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button variant="ghost" size="sm">
-                                <Ban className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <Users className="h-16 w-16 mx-auto mb-4 text-gray-300" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">No team members yet</h3>
-                  <p className="text-gray-500 mb-4">Start building your team by inviting users</p>
-                  <Button onClick={() => setShowInviteModal(true)}>
-                    <UserPlus className="h-4 w-4 mr-2" />
-                    Invite First User
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </main>
+    <div className="container mx-auto p-6 space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold">Team Management</h1>
+          <p className="text-gray-600 mt-2">
+            {user?.role === 'superadmin' 
+              ? 'Manage tenants and platform access'
+              : user?.role === 'admin'
+              ? 'Manage supervisors and company settings'
+              : user?.role === 'supervisor'
+              ? 'Manage your sales team'
+              : 'View team information'
+            }
+          </p>
+        </div>
+        {getCreateButton()}
       </div>
 
-      <InviteUserModal 
-        open={showInviteModal} 
-        onOpenChange={setShowInviteModal}
-      />
+      {/* SuperAdmin Tenant View */}
+      {user?.role === 'superadmin' && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Users className="h-5 w-5" />
+              <span>Platform Tenants</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {tenants?.map((tenant: any) => (
+                <Card key={tenant.id} className="p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-semibold">{tenant.name}</h3>
+                    <Badge variant={tenant.isActive ? "default" : "secondary"}>
+                      {tenant.isActive ? "Active" : "Inactive"}
+                    </Badge>
+                  </div>
+                  <p className="text-sm text-gray-600 mb-2">
+                    {tenant.subdomain}.realestate.com
+                  </p>
+                  <div className="flex items-center justify-between text-xs text-gray-500">
+                    <span>{tenant.plan} Plan</span>
+                    <span>{tenant.userCount} users</span>
+                  </div>
+                </Card>
+              )) || (
+                <div className="col-span-full text-center py-8 text-gray-500">
+                  No tenants available
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Team Members View */}
+      {user?.role !== 'superadmin' && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Users className="h-5 w-5" />
+              <span>Team Members</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <div className="space-y-4">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="animate-pulse flex items-center space-x-4">
+                    <div className="rounded-full bg-gray-300 h-12 w-12"></div>
+                    <div className="flex-1 space-y-2">
+                      <div className="h-4 bg-gray-300 rounded w-1/4"></div>
+                      <div className="h-3 bg-gray-300 rounded w-1/2"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {users?.map((member: any) => (
+                  <div key={member.id} className="flex items-center justify-between p-4 rounded-lg border bg-white">
+                    <div className="flex items-center space-x-4">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold">
+                        {member.firstName?.[0]}{member.lastName?.[0]}
+                      </div>
+                      <div>
+                        <h3 className="font-semibold">{member.firstName} {member.lastName}</h3>
+                        <div className="flex items-center space-x-2 text-sm text-gray-600">
+                          <Mail className="h-4 w-4" />
+                          <span>{member.email}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <Badge className={`${getRoleColor(member.role)} flex items-center space-x-1`}>
+                        {getRoleIcon(member.role)}
+                        <span className="capitalize">{member.role}</span>
+                      </Badge>
+                      <div className="flex items-center text-xs text-gray-500">
+                        <Calendar className="h-4 w-4 mr-1" />
+                        <span>Joined {new Date(member.createdAt).toLocaleDateString()}</span>
+                      </div>
+                    </div>
+                  </div>
+                )) || (
+                  <div className="text-center py-8 text-gray-500">
+                    No team members found
+                  </div>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

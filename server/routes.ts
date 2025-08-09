@@ -318,6 +318,112 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User Management Routes (Role-based creation)
+  app.post('/api/users', async (req: any, res) => {
+    try {
+      const { firstName, lastName, email, role } = req.body;
+      const userRole = req.session?.userRole || 'sales';
+      const tenantId = 'tenant-1'; // Mock tenant for demo
+      
+      // Role-based permission check
+      const canCreate = {
+        'superadmin': false, // SuperAdmin creates tenants, not users
+        'admin': ['supervisor'],
+        'supervisor': ['sales'],
+        'sales': []
+      };
+      
+      if (!canCreate[userRole]?.includes(role)) {
+        return res.status(403).json({ 
+          message: `${userRole} cannot create ${role} users` 
+        });
+      }
+      
+      // Create new user
+      const newUser = {
+        id: `user-${Date.now()}`,
+        tenantId,
+        firstName,
+        lastName,
+        email,
+        role,
+        isActive: true,
+        createdAt: new Date().toISOString(),
+      };
+      
+      res.status(201).json(newUser);
+    } catch (error) {
+      console.error("Error creating user:", error);
+      res.status(500).json({ message: "Failed to create user" });
+    }
+  });
+
+  app.get('/api/users', async (req: any, res) => {
+    try {
+      const userRole = req.session?.userRole || 'sales';
+      const tenantId = 'tenant-1'; // Mock tenant for demo
+      
+      // Return users based on role permissions
+      const users = [
+        {
+          id: '1',
+          tenantId,
+          firstName: 'Platform',
+          lastName: 'Admin',
+          email: 'admin@platform.com',
+          role: 'superadmin',
+          isActive: true,
+          createdAt: '2024-01-01',
+        },
+        {
+          id: '2',
+          tenantId,
+          firstName: 'John',
+          lastName: 'Anderson',
+          email: 'john@primerealty.com',
+          role: 'admin',
+          isActive: true,
+          createdAt: '2024-01-15',
+        },
+        {
+          id: '3',
+          tenantId,
+          firstName: 'Sarah',
+          lastName: 'Wilson',
+          email: 'sarah@primerealty.com',
+          role: 'supervisor',
+          isActive: true,
+          createdAt: '2024-02-01',
+        },
+        {
+          id: '4',
+          tenantId,
+          firstName: 'Mike',
+          lastName: 'Johnson',
+          email: 'mike@primerealty.com',
+          role: 'sales',
+          isActive: true,
+          createdAt: '2024-02-15',
+        }
+      ];
+      
+      // Filter users based on role hierarchy
+      let filteredUsers = users;
+      if (userRole === 'admin') {
+        filteredUsers = users.filter(u => u.tenantId === tenantId);
+      } else if (userRole === 'supervisor') {
+        filteredUsers = users.filter(u => u.tenantId === tenantId && u.role === 'sales');
+      } else if (userRole === 'sales') {
+        filteredUsers = users.filter(u => u.id === req.session?.userId);
+      }
+      
+      res.json(filteredUsers);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+
   // Lead management routes
   app.get('/api/leads', async (req: any, res) => {
     try {
