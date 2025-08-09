@@ -44,10 +44,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const mockUsers = {
         superadmin: {
           id: '1',
-          firstName: 'Super',
+          firstName: 'Platform',
           lastName: 'Admin',
-          email: 'superadmin@primerealty.com',
+          email: 'superadmin@crmsaas.com',
           role: 'superadmin',
+          tenantId: null, // Access to all tenants
+          company: 'SaaS Platform',
+          permissions: ['manage_all_tenants', 'system_config', 'billing_management'],
           profileImageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40'
         },
         admin: {
@@ -56,6 +59,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           lastName: 'Anderson',
           email: 'admin@primerealty.com',
           role: 'admin',
+          tenantId: 'tenant-1',
+          company: 'PrimeRealty',
+          permissions: ['manage_company', 'manage_users', 'full_access_leads_properties'],
           profileImageUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40'
         },
         supervisor: {
@@ -64,14 +70,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
           lastName: 'Wilson',
           email: 'supervisor@primerealty.com',
           role: 'supervisor',
+          tenantId: 'tenant-1',
+          company: 'PrimeRealty',
+          teamId: 'team-sales-west',
+          permissions: ['manage_team_leads', 'assign_leads', 'approve_deals', 'team_reports'],
           profileImageUrl: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40'
         },
         sales: {
           id: '4',
           firstName: 'Mike',
-          lastName: 'Davis',
-          email: 'sales@primerealty.com',
+          lastName: 'Johnson',
+          email: 'mike@primerealty.com',
           role: 'sales',
+          tenantId: 'tenant-1',
+          company: 'PrimeRealty',
+          teamId: 'team-sales-west',
+          supervisorId: '3',
+          permissions: ['manage_assigned_leads', 'record_activities', 'close_deals', 'view_own_commission'],
           profileImageUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=40&h=40'
         }
       };

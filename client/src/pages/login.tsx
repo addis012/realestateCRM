@@ -9,23 +9,26 @@ const roleInfo = [
   {
     role: 'superadmin',
     title: 'Super Admin',
-    description: 'Platform administration and tenant management',
+    description: 'Platform Owner - Oversees entire SaaS platform and all tenant companies',
+    responsibilities: ['Manage all tenants', 'Monitor system health', 'Configure global settings', 'Handle billing & subscriptions'],
     icon: Crown,
     color: 'bg-red-600',
     endpoint: '/api/login/superadmin'
   },
   {
     role: 'admin', 
-    title: 'Admin',
-    description: 'Company management and oversight',
+    title: 'Company Admin',
+    description: 'Tenant Owner - Manages company CRM instance and business operations',
+    responsibilities: ['Company branding & settings', 'Manage all users', 'Full lead & property access', 'Generate reports'],
     icon: Shield,
     color: 'bg-blue-600',
     endpoint: '/api/login/admin'
   },
   {
     role: 'supervisor',
-    title: 'Supervisor', 
-    description: 'Team management and performance tracking',
+    title: 'Team Manager',
+    description: 'Oversees sales agents, ensuring lead follow-up and team performance',
+    responsibilities: ['Manage team leads', 'Assign/reassign leads', 'Track agent performance', 'Approve deals'],
     icon: Eye,
     color: 'bg-emerald-600',
     endpoint: '/api/login/supervisor'
@@ -33,7 +36,8 @@ const roleInfo = [
   {
     role: 'sales',
     title: 'Sales Agent',
-    description: 'Lead management and deal tracking',
+    description: 'Works directly with assigned leads and property listings to close deals',
+    responsibilities: ['Contact assigned leads', 'Present properties', 'Record activities', 'Track commissions'],
     icon: User,
     color: 'bg-purple-600',
     endpoint: '/api/login/sales'
@@ -73,9 +77,17 @@ export default function Login() {
                   <CardTitle className="text-lg font-semibold text-gray-900">
                     {roleData.title}
                   </CardTitle>
-                  <p className="text-sm text-gray-600 leading-relaxed">
+                  <p className="text-sm text-gray-600 leading-relaxed mb-3">
                     {roleData.description}
                   </p>
+                  <div className="space-y-1">
+                    {roleData.responsibilities.slice(0, 2).map((resp, idx) => (
+                      <div key={idx} className="text-xs text-gray-500 flex items-center">
+                        <div className="w-1 h-1 bg-gray-400 rounded-full mr-2"></div>
+                        {resp}
+                      </div>
+                    ))}
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <Button 
