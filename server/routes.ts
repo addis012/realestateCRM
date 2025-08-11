@@ -237,27 +237,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get('/api/superadmin/tenants', async (req: any, res) => {
     try {
-      // Basic tenant information only (no business data)
-      const tenants = [
-        {
-          id: 'tenant-1',
-          name: 'PrimeRealty',
-          subdomain: 'primerealty',
-          isActive: true,
-          createdAt: '2024-01-15',
-          plan: 'Professional',
-          userCount: 12
-        },
-        {
-          id: 'tenant-2', 
-          name: 'UrbanProperties',
-          subdomain: 'urbanprops',
-          isActive: true,
-          createdAt: '2024-02-20',
-          plan: 'Enterprise',
-          userCount: 25
-        }
-      ];
+      // Get all tenants from database (platform management data only)
+      const allTenants = await storage.getAllTenants();
+      
+      // Format for SuperAdmin view (no tenant business data)
+      const tenants = allTenants.map(tenant => ({
+        id: tenant.id,
+        name: tenant.name,
+        subdomain: tenant.subdomain,
+        isActive: tenant.isActive,
+        createdAt: tenant.createdAt,
+        plan: 'Basic', // Default plan for display
+        userCount: 0, // Default user count
+        customDomain: tenant.customDomain
+      }));
+      
       res.json(tenants);
     } catch (error) {
       console.error("Error fetching tenants:", error);
@@ -267,20 +261,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/superadmin/tenants', async (req: any, res) => {
     try {
-      const { name, subdomain, plan } = req.body;
+      const { name, subdomain, plan, adminEmail, adminFirstName, adminLastName } = req.body;
       
-      // Create new tenant
-      const newTenant = {
-        id: `tenant-${Date.now()}`,
+      // Validate required fields
+      if (!name || !subdomain) {
+        return res.status(400).json({ message: "Name and subdomain are required" });
+      }
+      
+      // Create new tenant in database
+      const tenantData = {
         name,
         subdomain,
-        plan: plan || 'Basic',
         isActive: true,
-        createdAt: new Date().toISOString().split('T')[0],
-        userCount: 0
+        customDomain: null
       };
       
-      res.status(201).json(newTenant);
+      const newTenant = await storage.createTenant(tenantData);
+      
+      // Create admin user for the tenant
+      if (adminEmail && adminFirstName && adminLastName) {
+        const adminUser = {
+          firstName: adminFirstName,
+          lastName: adminLastName,
+          email: adminEmail,
+          role: 'admin' as const,
+          tenantId: newTenant.id,
+          isActive: true
+        };
+        
+        await storage.upsertUser(adminUser);
+      }
+      
+      res.status(201).json({
+        id: newTenant.id,
+        name: newTenant.name,
+        subdomain: newTenant.subdomain,
+        isActive: newTenant.isActive,
+        createdAt: newTenant.createdAt,
+        plan: plan || 'Basic',
+        userCount: 1 // Admin user created
+      });
     } catch (error) {
       console.error("Error creating tenant:", error);
       res.status(500).json({ message: "Failed to create tenant" });
@@ -333,7 +353,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         'sales': []
       };
       
-      if (!canCreate[userRole]?.includes(role)) {
+      if (!(canCreate as any)[userRole]?.includes(role)) {
         return res.status(403).json({ 
           message: `${userRole} cannot create ${role} users` 
         });

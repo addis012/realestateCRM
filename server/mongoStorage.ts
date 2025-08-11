@@ -94,6 +94,12 @@ export class MongoStorage implements IStorage {
     return tenant ? this.convertFromMongo(tenant) : undefined;
   }
 
+  async getAllTenants(): Promise<Tenant[]> {
+    const db = await this.getDb();
+    const tenants = await db.collection('tenants').find({}).sort({ createdAt: -1 }).toArray();
+    return tenants.map(tenant => this.convertFromMongo(tenant));
+  }
+
   async createTenant(tenant: InsertTenant): Promise<Tenant> {
     const db = await this.getDb();
     const newTenant = {
